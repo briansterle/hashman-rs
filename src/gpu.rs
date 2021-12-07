@@ -31,10 +31,7 @@ impl WindowsGPU {
                 .expect("failed to execute process")
         };
 
-        let stdout = output.stdout
-            .iter()
-            .map(|c| String::from(c))
-            .reduce(|a, b| String::from(a , b));
+        let stdout =  String::from_utf8_lossy(&output.stdout);
 
         println!("{:?}", stdout);
         match output.status.code() {
