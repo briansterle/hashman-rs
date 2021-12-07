@@ -18,16 +18,25 @@ pub struct WindowsGPU {
 }
 
 impl WindowsGPU {
-    fn run_python() -> Result<(), String> {
+    pub fn run_python(&self) -> Result<(), String> {
         let output = if cfg!(target_os = "windows") {
-            Command::new("cmd")
-                .args(["/C", "echo hello"])
+            Command::new("echo")
+                .args(["world", "hello"])
                 .output()
                 .expect("failed to execute process")
         } else {
-            panic!()
+            Command::new("echo")
+                .args(["world", "hello"])
+                .output()
+                .expect("failed to execute process")
         };
 
+        let stdout = output.stdout
+            .iter()
+            .map(|c| String::from(c))
+            .reduce(|a, b| String::from(a , b));
+
+        println!("{:?}", stdout);
         match output.status.code() {
             Some(code) if code == 0 => Ok(()),
             Some(_) => Err(String::from("Exited with non-zero code")),

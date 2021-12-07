@@ -11,8 +11,11 @@ fn util() -> GPULoad {
 }
 
 fn main() {
-    println!("Hello, world!");
     let wgpu: WindowsGPU = GPU::new("get_gpu_util.py");
 
-    println!("{:?}", wgpu.util())
+    println!("{:?}", wgpu.util());
+
+    wgpu.run_python();
+    // wgpu.run
+
 }
