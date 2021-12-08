@@ -2,14 +2,20 @@ use std::process::Command;
 
 
 #[derive(Debug)]
-pub struct GPULoad(f64);
+pub struct GPULoad(f32);
 
 
 pub trait GPU {
     // Associated function signature; `Self` refers to the implementor type.
     fn new(py_file: &'static str) -> Self;
 
-    fn util(&self) -> GPULoad;
+    fn get_util(&self) -> Result<GPULoad, String>;
+    fn parse_usage(stdout: Vec<u8>) -> f32 {
+        return String::from_utf8_lossy(&stdout)
+            .trim()
+            .parse()
+            .unwrap();
+    }
 }
 
 pub struct WindowsGPU {
@@ -18,35 +24,28 @@ pub struct WindowsGPU {
 }
 
 impl WindowsGPU {
-    pub fn run_python(&self) -> Result<(), String> {
-        let output = if cfg!(target_os = "windows") {
-            Command::new("echo")
-                .args(["world", "hello"])
-                .output()
-                .expect("failed to execute process")
-        } else {
-            Command::new("echo")
-                .args(["world", "hello"])
-                .output()
-                .expect("failed to execute process")
-        };
 
-        let stdout =  String::from_utf8_lossy(&output.stdout);
-
-        println!("{:?}", stdout);
-        match output.status.code() {
-            Some(code) if code == 0 => Ok(()),
-            Some(_) => Err(String::from("Exited with non-zero code")),
-            None => Err(String::from("Exited with missing code"))
-        }
-    }
 }
 
 impl GPU for WindowsGPU {
     fn new(py_file: &'static str) -> WindowsGPU {
-        WindowsGPU { py_file, py_exec: "python3" }
+        WindowsGPU { py_file, py_exec: "python" }
     }
-    fn util(&self) -> GPULoad {
-        GPULoad(42.0)
+
+    fn get_util(&self) -> Result<GPULoad, String> {
+        let output = Command::new(self.py_exec)
+            .args([self.py_file])
+            .output()
+            .expect("failed to execute process");
+
+        match output.status.code() {
+            Some(code) if code == 0 => Ok(
+                GPULoad(
+                    WindowsGPU::parse_usage(output.stdout)
+                )
+            ),
+            Some(_) => Err(String::from("Exited with non-zero code")),
+            None => Err(String::from("Exited with missing code"))
+        }
     }
 }
