@@ -7,7 +7,7 @@ pub struct GPULoad(f32);
 
 pub trait GPU {
     // Associated function signature; `Self` refers to the implementor type.
-    fn new(py_file: &'static str) -> Self;
+    fn new(py_file: &'static str, py_exec: &'static str,) -> Self;
 
     fn get_util(&self) -> Result<GPULoad, String>;
     fn parse_usage(stdout: Vec<u8>) -> f32 {
@@ -23,13 +23,9 @@ pub struct WindowsGPU {
     py_exec: &'static str,
 }
 
-impl WindowsGPU {
-
-}
-
 impl GPU for WindowsGPU {
-    fn new(py_file: &'static str) -> WindowsGPU {
-        WindowsGPU { py_file, py_exec: "python" }
+    fn new(py_file: &'static str, py_exec: &'static str,) -> WindowsGPU {
+        WindowsGPU { py_file, py_exec }
     }
 
     fn get_util(&self) -> Result<GPULoad, String> {

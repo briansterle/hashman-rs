@@ -3,6 +3,6 @@ mod gpu;
 
 
 fn main() {
-    let wgpu: WindowsGPU = GPU::new("src/python/get_gpu_util.py");
+    let wgpu: WindowsGPU = GPU::new("src/python/get_gpu_util.py", "python");
     println!("{:?}", wgpu.get_util());
 }
