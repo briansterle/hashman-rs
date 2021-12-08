@@ -12,4 +12,6 @@ fn main() {
 
     let rig_state = Rig::current_state(util.expect("no gpu util found"));
     println!("{:?}", rig_state);
+
+    println!("gm")
 }
