@@ -2,12 +2,10 @@ use std::fs;
 
 use serde::{Deserialize, Serialize};
 
-pub fn read() -> String {
-  fs::read_to_string("config.json").expect("config.json is invalid")
-}
-
+#[inline(always)]
 pub fn json() -> Config {
-  serde_json::from_str(&read()).expect("config.json is invalid")
+  let json_str = fs::read_to_string("config.json").unwrap();
+  serde_json::from_str(&json_str).expect("config.json is invalid")
 }
 
 #[derive(Debug, Serialize, Deserialize)]
