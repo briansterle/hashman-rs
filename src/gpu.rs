@@ -2,7 +2,9 @@ use std::process::Command;
 
 
 #[derive(Debug)]
-pub struct GPULoad(f32);
+pub struct GPULoad {
+    pub load: f32
+}
 
 
 pub trait GPU {
@@ -36,9 +38,9 @@ impl GPU for WindowsGPU {
 
         match output.status.code() {
             Some(code) if code == 0 => Ok(
-                GPULoad(
-                    WindowsGPU::parse_usage(output.stdout)
-                )
+                GPULoad {
+                    load: WindowsGPU::parse_usage(output.stdout)
+                }
             ),
             Some(_) => Err(String::from("Exited with non-zero code")),
             None => Err(String::from("Exited with missing code"))

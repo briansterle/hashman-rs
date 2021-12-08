@@ -2,12 +2,14 @@ use crate::gpu::{GPU, WindowsGPU};
 use crate::rig::{Rig};
 mod gpu;
 mod rig;
+mod mining;
 
 
 fn main() {
     let wgpu: WindowsGPU = GPU::new("src/python/get_gpu_util.py", "python");
-    println!("{:?}", wgpu.get_util());
+    let util = wgpu.get_util();
+    println!("{:?}", util);
 
-    let rig_state = Rig::current_state();
+    let rig_state = Rig::current_state(util.expect("no gpu util found"));
     println!("{:?}", rig_state);
 }
