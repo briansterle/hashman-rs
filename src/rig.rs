@@ -1,8 +1,12 @@
+use std::collections::HashMap;
 use crate::gpu::GPULoad;
 use crate::mining::Mining;
 
 use std::process;
 use std::process::id;
+
+use sysinfo;
+use sysinfo::{Pid, Process, ProcessExt, SystemExt};
 
 #[derive(Debug)]
 pub enum RigState {
@@ -25,9 +29,14 @@ impl Rig {
 
 }
 
+impl RigProcess for Rig {
 
-trait RigProcess {
-    fn get_all(&self) -> u32 {
-        id()
+}
+
+pub trait RigProcess {
+    fn processes_matching(str: &str) -> &HashMap<Pid, Process> {
+        return sysinfo::System::new_all().processes().into_iter()
+            .filter(|&(_, p)| p.name().contains(str))
+            .collect();
     }
 }

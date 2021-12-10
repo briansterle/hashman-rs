@@ -1,5 +1,5 @@
 use crate::gpu::{GPU, WindowsGPU};
-use crate::rig::{Rig};
+use crate::rig::{Rig, RigProcess};
 mod gpu;
 mod rig;
 mod mining;
@@ -22,5 +22,8 @@ fn main() {
     for (pid, process) in s.processes() {
         println!("{} {}", pid, process.name());
     }
+
+    let ps = Rig::processes_matching("nicehash");
+    ps.iter().for_each(|(pid, p)| println!("{}", pid))
 
 }
