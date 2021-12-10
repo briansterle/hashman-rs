@@ -1,6 +1,8 @@
 use crate::gpu::GPULoad;
 use crate::mining::Mining;
 
+use std::process;
+use std::process::id;
 
 #[derive(Debug)]
 pub enum RigState {
@@ -21,4 +23,11 @@ impl Rig {
         }
     }
 
+}
+
+
+trait RigProcess {
+    fn get_all(&self) -> u32 {
+        id()
+    }
 }
