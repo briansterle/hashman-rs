@@ -16,6 +16,6 @@ fn main() {
     println!("{}", config::read());
     let conf: Config = config::json();
     println!("{:?}", conf);
-    // let update = Rig::update_state(rig_state);
-    // println!("Rig::updated_state {:?}", update);
+    let update = Rig::update_state(rig_state, &conf);
+    println!("Rig::updated_state {:?}", update);
 }

@@ -1,4 +1,5 @@
 use std::process::Command;
+use crate::Config;
 use crate::gpu::{GPU, WindowsGPU};
 use crate::rig::{Rig, RigProcess, RigState};
 
@@ -6,12 +7,9 @@ pub struct Mining;
 
 
 impl Mining {
-    fn get_mining_exe() -> &'static str {
-        r#"C:\Users\brian\AppData\Local\Programs\NiceHash Miner\NiceHashMiner.exe"#
-    }
 
-    pub fn restart() -> Result<RigState, RigState> {
-        let output = Command::new(Self::get_mining_exe())
+    pub fn restart(config: &Config) -> Result<RigState, RigState> {
+        let output = Command::new(&config.mining_exe)
             .output()
             .expect("failed to start mining process");
 

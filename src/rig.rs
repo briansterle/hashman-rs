@@ -1,7 +1,7 @@
 use sysinfo;
 use sysinfo::{ProcessExt, SystemExt};
 
-use crate::{GPU, WindowsGPU};
+use crate::{Config, GPU, WindowsGPU};
 use crate::mining::Mining;
 use crate::rig::RigState::Idle;
 
@@ -17,9 +17,9 @@ pub struct Rig;
 
 impl Rig {
 
-    pub fn update_state(current: RigState) -> RigState {
+    pub fn update_state(current: RigState, config: &Config) -> RigState {
         if current == Idle {
-            Mining::restart().expect("oops")
+            Mining::restart(config).expect("oops")
         } else {
             current
         }
