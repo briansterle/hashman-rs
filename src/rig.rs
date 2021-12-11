@@ -1,3 +1,4 @@
+use std::collections::hash_map::Values;
 use std::collections::HashMap;
 use crate::gpu::GPULoad;
 use crate::mining::Mining;
@@ -34,9 +35,14 @@ impl RigProcess for Rig {
 }
 
 pub trait RigProcess {
-    fn processes_matching(str: &str) -> &HashMap<Pid, Process> {
-        return sysinfo::System::new_all().processes().into_iter()
-            .filter(|&(_, p)| p.name().contains(str))
-            .collect();
+    fn filter_processes(str: &str) -> usize {
+        sysinfo::System::new_all().processes().values()
+            .map(|p| String::from(p.name()))
+            .filter(|s| s.contains(str))
+            .count()
+    }
+
+    fn is_mining() -> bool {
+        Self::filter_processes("nicehash") > 0
     }
 }

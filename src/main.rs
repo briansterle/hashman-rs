@@ -23,7 +23,10 @@ fn main() {
         println!("{} {}", pid, process.name());
     }
 
-    let ps = Rig::processes_matching("nicehash");
-    ps.iter().for_each(|(pid, p)| println!("{}", pid))
+    if Rig::is_mining() {
+        println!("nice hashing")
+    } else {
+        println!("no hashing :(")
+    }
 
 }
