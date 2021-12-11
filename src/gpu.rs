@@ -1,6 +1,7 @@
 use std::process::Command;
 
 #[derive(Debug)]
+#[derive(PartialOrd, PartialEq)]
 pub struct GPULoad {
     pub load: f32
 }

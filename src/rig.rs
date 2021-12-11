@@ -3,7 +3,7 @@ use sysinfo::{Process, ProcessExt, SystemExt};
 
 use crate::mining::Mining;
 use crate::rig::RigState::Idle;
-use crate::WindowsGPU;
+use crate::{GPU, WindowsGPU};
 
 #[derive(Debug)]
 #[derive(PartialEq)]
@@ -17,34 +17,6 @@ pub struct Rig;
 
 impl Rig {
 
-
-
-    /*
-      def currentState(): Task[RigState] =
-    for {
-      gpu <- GPU.util()
-      state <- Task {
-        if Mining.isActive(gpu) then
-          RigState.MINING
-        else if gpu.util >= 0.5 then
-          RigState.GAMING
-        else
-          RigState.IDLE
-      }
-    } yield state
-
-  def updateState(): Task[RigState] =
-    for {
-      prevState: RigState <- currentState()
-      newState <-
-        if (prevState == RigState.IDLE) {
-          Mining.restart(prevState)
-        } else {
-          Task.succeed(prevState)
-        }
-    } yield newState
-     */
-
     pub fn update_state(current: RigState) -> RigState {
         if current == Idle {
             Mining::restart()
@@ -56,6 +28,8 @@ impl Rig {
     pub fn current_state(gpu: &WindowsGPU) -> RigState {
         if Mining::is_healthy(gpu) {
             RigState::Mining
+        } else if gpu.get_util().expect("oops").load > 0.5 {
+            RigState::Gaming
         } else {
             RigState::Idle
         }
