@@ -8,6 +8,7 @@ use std::process::id;
 
 use sysinfo;
 use sysinfo::{Pid, Process, ProcessExt, SystemExt};
+use crate::WindowsGPU;
 
 #[derive(Debug)]
 pub enum RigState {
@@ -20,8 +21,36 @@ pub struct Rig;
 
 impl Rig {
 
-    pub fn current_state(gpu: GPULoad) -> RigState {
-        if Mining::is_active(gpu) {
+
+
+    /*
+      def currentState(): Task[RigState] =
+    for {
+      gpu <- GPU.util()
+      state <- Task {
+        if Mining.isActive(gpu) then
+          RigState.MINING
+        else if gpu.util >= 0.5 then
+          RigState.GAMING
+        else
+          RigState.IDLE
+      }
+    } yield state
+
+  def updateState(): Task[RigState] =
+    for {
+      prevState: RigState <- currentState()
+      newState <-
+        if (prevState == RigState.IDLE) {
+          Mining.restart(prevState)
+        } else {
+          Task.succeed(prevState)
+        }
+    } yield newState
+     */
+
+    pub fn current_state(gpu: &WindowsGPU) -> RigState {
+        if Mining::is_healthy(gpu) {
             RigState::Mining
         } else {
             RigState::Idle
@@ -40,9 +69,5 @@ pub trait RigProcess {
             .map(|p| String::from(p.name()))
             .filter(|s| s.contains(str))
             .count()
-    }
-
-    fn is_mining() -> bool {
-        Self::filter_processes("nicehash") > 0
     }
 }

@@ -5,28 +5,13 @@ mod rig;
 mod mining;
 
 use sysinfo::{ProcessExt, System, SystemExt};
-
+use crate::mining::Mining;
 
 
 fn main() {
     let wgpu: WindowsGPU = GPU::new("src/python/get_gpu_util.py", "python");
-    let util = wgpu.get_util();
-    println!("{:?}", util);
 
-    let rig_state = Rig::current_state(util.expect("no gpu util found"));
-    println!("{:?}", rig_state);
-
-
-
-    let s = sysinfo::System::new_all();
-    for (pid, process) in s.processes() {
-        println!("{} {}", pid, process.name());
-    }
-
-    if Rig::is_mining() {
-        println!("nice hashing")
-    } else {
-        println!("no hashing :(")
-    }
+    let rig_state = Rig::current_state(&wgpu);
+    println!("Rig::current_state {:?}", rig_state);
 
 }
