@@ -10,3 +10,4 @@ edition = "2021"
 sysinfo = "0.21.2"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = { version = "1.0.72" }
+crossbeam = "0.8.1"

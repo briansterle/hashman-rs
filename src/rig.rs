@@ -19,7 +19,7 @@ pub struct Rig;
 impl Rig {
     pub fn update_state(current: RigState, config: &Config) -> RigState {
         if current == RigState::Idle(false) {
-            Mining::restart(config).expect("oops")
+            Mining::restart_async(config).expect("oops")
         } else {
             current
         }
