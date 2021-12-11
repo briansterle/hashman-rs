@@ -3,7 +3,7 @@ use std::process::Command;
 #[derive(Debug)]
 #[derive(PartialOrd, PartialEq)]
 pub struct GPULoad {
-    pub load: f32
+    pub load: f32,
 }
 
 impl GPULoad {
@@ -35,7 +35,6 @@ pub struct WindowsGPU {
 }
 
 impl GPU for WindowsGPU {
-
     fn new(py_gputil: String, py_exec: String) -> WindowsGPU {
         WindowsGPU { py_gputil, py_exec }
     }

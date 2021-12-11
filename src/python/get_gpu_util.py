@@ -1,4 +1,5 @@
 import GPUtil
+
 try:
     print(GPUtil.getGPUs().pop().load)
 except IndexError as e:

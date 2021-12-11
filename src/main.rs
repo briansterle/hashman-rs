@@ -8,7 +8,7 @@ mod mining;
 mod config;
 
 fn main() {
-    println!("Hashman [INFO] Reading config...");    
+    println!("Hashman [INFO] Reading config...");
     let conf: Config = config::json();
 
     println!("Hashman [INFO] config: {:?}", conf);
