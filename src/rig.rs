@@ -1,9 +1,9 @@
 use sysinfo;
-use sysinfo::{Process, ProcessExt, SystemExt};
+use sysinfo::{ProcessExt, SystemExt};
 
+use crate::{GPU, WindowsGPU};
 use crate::mining::Mining;
 use crate::rig::RigState::Idle;
-use crate::{GPU, WindowsGPU};
 
 #[derive(Debug)]
 #[derive(PartialEq)]

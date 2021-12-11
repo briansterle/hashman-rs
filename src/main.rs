@@ -1,5 +1,5 @@
 use crate::gpu::{GPU, WindowsGPU};
-use crate::rig::{Rig};
+use crate::rig::Rig;
 
 mod gpu;
 mod rig;
