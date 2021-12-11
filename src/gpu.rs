@@ -1,6 +1,5 @@
 use std::process::Command;
 
-
 #[derive(Debug)]
 pub struct GPULoad {
     pub load: f32

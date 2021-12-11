@@ -1,6 +1,5 @@
-use crate::gpu::{GPU, GPULoad, WindowsGPU};
+use crate::gpu::{GPU, WindowsGPU};
 use crate::rig::{Rig, RigProcess};
-
 
 pub struct Mining;
 

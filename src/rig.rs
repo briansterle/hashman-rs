@@ -1,13 +1,7 @@
-use std::collections::hash_map::Values;
-use std::collections::HashMap;
-use crate::gpu::GPULoad;
-use crate::mining::Mining;
-
-use std::process;
-use std::process::id;
-
 use sysinfo;
-use sysinfo::{Pid, Process, ProcessExt, SystemExt};
+use sysinfo::{ProcessExt, SystemExt};
+
+use crate::mining::Mining;
 use crate::WindowsGPU;
 
 #[derive(Debug)]
