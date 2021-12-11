@@ -15,13 +15,13 @@ impl Mining {
 
         match output.status.code() {
             Some(code) if code == 0 => {
-                Ok(RigState::Mining)
+                Ok(RigState::Mining(None))
             }
             Some(code) => {
                 println!("Unexpectedly exited mining exe with status code: {}", code);
-                Err(RigState::Idle)
+                Err(RigState::Idle(None))
             }
-            None => Err(RigState::Idle)
+            None => Err(RigState::Idle(None))
         }
     }
 
