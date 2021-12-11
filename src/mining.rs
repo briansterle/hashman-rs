@@ -1,11 +1,10 @@
-
 use std::process::Command;
 
 use sysinfo::{ProcessExt, Signal, SystemExt};
 
 use crate::Config;
 use crate::gpu::{GPU, GPULoad, WindowsGPU};
-use crate::rig::{RigState};
+use crate::rig::RigState;
 
 pub struct Mining;
 

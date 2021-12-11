@@ -1,11 +1,5 @@
-
-
-
-
-
 use crate::{Config, WindowsGPU};
 use crate::mining::Mining;
-
 
 #[derive(Debug)]
 pub enum RigState {
