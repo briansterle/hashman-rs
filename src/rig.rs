@@ -19,7 +19,7 @@ impl Rig {
 
     pub fn update_state(current: RigState) -> RigState {
         if current == Idle {
-            Mining::restart()
+            Mining::restart().expect("oops")
         } else {
             current
         }
@@ -44,8 +44,7 @@ impl RigProcess for Rig {
 pub trait RigProcess {
     fn filter_processes(str: &str) -> usize {
         sysinfo::System::new_all().processes().values()
-            .map(|p| String::from(p.name()))
-            .filter(|s| s.to_lowercase().contains(&str.to_lowercase()))
+            .filter(|p| p.name().to_lowercase().contains(&str.to_lowercase()))
             .count()
     }
 }

@@ -1,3 +1,4 @@
+use std::process::Command;
 use crate::gpu::{GPU, WindowsGPU};
 use crate::rig::{Rig, RigProcess, RigState};
 
@@ -5,8 +6,25 @@ pub struct Mining;
 
 
 impl Mining {
-    pub fn restart() -> RigState {
-        RigState::Mining
+    fn get_mining_exe() -> &'static str {
+        r#"C:\Users\brian\AppData\Local\Programs\NiceHash Miner\NiceHashMiner.exe"#
+    }
+
+    pub fn restart() -> Result<RigState, RigState> {
+        let output = Command::new(Self::get_mining_exe())
+            .output()
+            .expect("failed to start mining process");
+
+        match output.status.code() {
+            Some(code) if code == 0 => {
+                Ok(RigState::Mining)
+            }
+            Some(code) => {
+                println!("Unexpectedly exited mining exe with status code: {}", code);
+                Err(RigState::Idle)
+            }
+            None => Err(RigState::Idle)
+        }
     }
 
     pub fn is_healthy(gpu: &WindowsGPU) -> bool {
