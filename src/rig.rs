@@ -1,11 +1,11 @@
-use std::borrow::Borrow;
 
-use sysinfo;
-use sysinfo::{Process, System};
+
+
+
 
 use crate::{Config, WindowsGPU};
 use crate::mining::Mining;
-use crate::rig::RigState::Idle;
+
 
 #[derive(Debug)]
 pub enum RigState {

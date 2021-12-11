@@ -1,4 +1,4 @@
-use std::borrow::Borrow;
+
 use std::process::Command;
 
 use sysinfo::{ProcessExt, Signal, SystemExt};
@@ -45,7 +45,7 @@ impl Mining {
             .values()
             .find(|p| p.name().to_lowercase().contains("nicehash")
             ) {
-            Some(p) if (load.is_hot()) => {
+            Some(_p) if (load.is_hot()) => {
                 RigState::Mining(false)
             }
             Some(p) => { // not hot, but mining
