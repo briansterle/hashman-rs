@@ -28,7 +28,7 @@ impl Rig {
     pub fn current_state(gpu: &WindowsGPU) -> RigState {
         if Mining::is_healthy(gpu) {
             RigState::Mining
-        } else if gpu.get_util().expect("oops").load > 0.5 {
+        } else if gpu.get_util().expect("err running gputil.py").load > 0.5 {
             RigState::Gaming
         } else {
             RigState::Idle

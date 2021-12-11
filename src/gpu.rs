@@ -9,7 +9,7 @@ pub struct GPULoad {
 
 pub trait GPU {
     // Associated function signature; `Self` refers to the implementor type.
-    fn new(py_file: &'static str, py_exec: &'static str,) -> Self;
+    fn new(py_gputil: String, py_exec: String) -> Self;
 
     fn get_util(&self) -> Result<GPULoad, String>;
     fn parse_usage(stdout: Vec<u8>) -> f32 {
@@ -21,18 +21,18 @@ pub trait GPU {
 }
 
 pub struct WindowsGPU {
-    py_file: &'static str,
-    py_exec: &'static str,
+    py_gputil: String,
+    py_exec: String,
 }
 
 impl GPU for WindowsGPU {
-    fn new(py_file: &'static str, py_exec: &'static str,) -> WindowsGPU {
-        WindowsGPU { py_file, py_exec }
+    fn new(py_gputil: String, py_exec: String) -> WindowsGPU {
+        WindowsGPU { py_gputil, py_exec }
     }
 
     fn get_util(&self) -> Result<GPULoad, String> {
-        let output = Command::new(self.py_exec)
-            .args([self.py_file])
+        let output = Command::new(&self.py_exec)
+            .args([&self.py_gputil])
             .output()
             .expect("failed to execute process");
 

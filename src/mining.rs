@@ -9,7 +9,7 @@ pub struct Mining;
 impl Mining {
 
     pub fn restart(config: &Config) -> Result<RigState, RigState> {
-        let output = Command::new(&config.mining_exe)
+        let output = Command::new(&config.miner_exe)
             .output()
             .expect("failed to start mining process");
 
