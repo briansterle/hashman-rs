@@ -1,3 +1,5 @@
 {
-  "miner_exe": "C:\\Users\\brian\\AppData\\Local\\Programs\\NiceHash Miner\\NiceHashMiner.exe"
+  "miner_exe": "C:\\Users\\brian\\AppData\\Local\\Programs\\NiceHash Miner\\NiceHashMiner.exe",
+  "py_exec": "python",
+  "py_gputil": "src/python/get_gpu_util.py"
 }

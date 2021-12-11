@@ -13,6 +13,6 @@ pub fn json() -> Config {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
     pub mining_exe: String
-    // python_exec: String,
-    // python_gpu_util: String,
+    pub py_exec: String,
+    pub py_gputil: String,
 }
