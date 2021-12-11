@@ -11,7 +11,7 @@ fn main() {
     println("Hashman [INFO] Reading config...");    
     let conf: Config = config::json();
 
-    println("Hashman [INFO] config: {:?}", conf)
+    println("Hashman [INFO] config: {:?}", conf);
 
     let wgpu: WindowsGPU = GPU::new(&conf.py_exec, &conf.py_gputil);
 
