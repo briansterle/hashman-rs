@@ -9,21 +9,17 @@ use sysinfo::{System};
 
 pub struct Mining;
 
-struct BackgroundProcess {}
 
-impl BackgroundProcess {
-    pub fn program(process: &String) -> String {
-        let mut prefix = "START /B ".to_owned();
-        prefix.push_str(process);
-        prefix
-    }
+pub fn background_process(process: &String) -> String {
+    let mut prefix = "START /B ".to_owned();
+    prefix.push_str(process);
+    prefix
 }
-
 
 
 impl Mining {
     pub fn restart(config: &Config) -> Result<RigState, RigState> {
-        let process = BackgroundProcess::program(&config.miner_exe);
+        let process = background_process(&config.miner_exe);
 
         let output = Command::new(process)
             .output()
