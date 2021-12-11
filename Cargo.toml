@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 #psutil = "3.2.1"
 sysinfo = "0.21.2"
+serde_json = "1.0.72"
