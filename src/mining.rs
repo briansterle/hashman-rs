@@ -10,7 +10,7 @@ use sysinfo::{System};
 pub struct Mining;
 
 
-pub fn background_process(process: &String) -> String {
+fn background_process(process: &String) -> String {
     let mut prefix = "START /B ".to_owned();
     prefix.push_str(process);
     prefix
