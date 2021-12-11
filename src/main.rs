@@ -1,3 +1,4 @@
+use crate::config::Config;
 use crate::gpu::{GPU, WindowsGPU};
 use crate::rig::Rig;
 
@@ -12,9 +13,9 @@ fn main() {
     let rig_state = Rig::current_state(&wgpu);
     println!("Rig::current_state {:?}", rig_state);
 
-    println!("{}", config::read_string());
+    println!("{}", config::read());
     let conf: Config = config::json();
-    println!("{}", conf);
+    println!("{:?}", conf);
     // let update = Rig::update_state(rig_state);
     // println!("Rig::updated_state {:?}", update);
 }
