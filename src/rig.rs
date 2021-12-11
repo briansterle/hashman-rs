@@ -43,14 +43,9 @@ impl RigProcess for Rig {
 
 pub trait RigProcess {
     fn filter_processes(str: &str) -> usize {
-        println!("Filtering processes");
         sysinfo::System::new_all().processes().values()
-            .map(|p| {
-                println!("{:?}", p);
-                p
-            })
             .map(|p| String::from(p.name()))
-            .filter(|s| s.contains(str))
+            .filter(|s| s.to_lowercase().contains(&str.to_lowercase()))
             .count()
     }
 }
