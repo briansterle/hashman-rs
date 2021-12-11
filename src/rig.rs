@@ -1,8 +1,9 @@
 use std::borrow::Borrow;
-use sysinfo;
-use sysinfo::{Process, ProcessExt, System, SystemExt};
 
-use crate::{Config, GPU, WindowsGPU};
+use sysinfo;
+use sysinfo::{Process, System};
+
+use crate::{Config, WindowsGPU};
 use crate::mining::Mining;
 use crate::rig::RigState::Idle;
 

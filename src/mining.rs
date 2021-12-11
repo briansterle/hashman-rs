@@ -1,11 +1,11 @@
 use std::borrow::Borrow;
 use std::process::Command;
-use sysinfo::{Process, ProcessExt, Signal, SystemExt};
+
+use sysinfo::{ProcessExt, Signal, SystemExt};
+
 use crate::Config;
 use crate::gpu::{GPU, GPULoad, WindowsGPU};
-use crate::rig::{Rig, RigState};
-
-use sysinfo::{System};
+use crate::rig::{RigState};
 
 pub struct Mining;
 
