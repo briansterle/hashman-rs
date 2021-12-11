@@ -3,16 +3,29 @@ use std::process::Command;
 use sysinfo::{Process, ProcessExt, Signal, SystemExt};
 use crate::Config;
 use crate::gpu::{GPU, GPULoad, WindowsGPU};
-use crate::rig::{Rig, RigProcess, RigState};
+use crate::rig::{Rig, RigState};
 
 use sysinfo::{System};
 
 pub struct Mining;
 
+struct BackgroundProcess {}
+
+impl BackgroundProcess {
+    pub fn program(process: &String) -> String {
+        let mut prefix = "START /B ".to_owned();
+        prefix.push_str(process);
+        prefix
+    }
+}
+
+
 
 impl Mining {
     pub fn restart(config: &Config) -> Result<RigState, RigState> {
-        let output = Command::new(&config.miner_exe)
+        let process = BackgroundProcess::program(&config.miner_exe);
+
+        let output = Command::new(process)
             .output()
             .expect("failed to start mining process");
 
@@ -29,30 +42,25 @@ impl Mining {
     }
 
     pub fn run(gpu: &WindowsGPU) -> RigState {
-        match (sysinfo::System::new_all().processes().values().find(|p|
-                    p.name().to_lowercase().contains("nicehash")),
-               gpu.get_util()
-        ) {
-            (Some(p), Ok(u)) if (u.load > 0.5) => {
+        let load: GPULoad = gpu.get_util().expect("error getting gpu util");
+
+        match sysinfo::System::new_all()
+            .processes()
+            .values()
+            .find(|p| p.name().to_lowercase().contains("nicehash")
+            ) {
+            Some(p) if (load.is_hot()) => {
                 RigState::Mining(false)
             }
-            (Some(p), Ok(u)) if (u.load <= 0.5) => {
+            Some(p) => { // not hot, but mining
                 RigState::Mining(p.kill(Signal::Kill))
             }
-            (Some(p), Err(e)) => {
-                RigState::Idle(p.kill(Signal::Kill))
-            }
-            (None, Ok(u)) => if u.load > 0.5 {
+            None if load.is_hot() => {
                 RigState::Gaming(false)
-            } else {
+            }
+            None => { // not hot, not mining
                 RigState::Idle(false)
             }
-
-            (None, Err(e)) => {
-                RigState::Idle(false)
-            }
-
-            _ => unreachable!()
         }
     }
 }

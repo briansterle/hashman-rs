@@ -6,6 +6,15 @@ pub struct GPULoad {
     pub load: f32
 }
 
+impl GPULoad {
+    pub fn is_hot(&self) -> bool {
+        self.load > 0.5
+    }
+    pub fn not_hot(&self) -> bool {
+        !self.is_hot()
+    }
+}
+
 
 pub trait GPU {
     // Associated function signature; `Self` refers to the implementor type.
@@ -26,6 +35,7 @@ pub struct WindowsGPU {
 }
 
 impl GPU for WindowsGPU {
+
     fn new(py_gputil: String, py_exec: String) -> WindowsGPU {
         WindowsGPU { py_gputil, py_exec }
     }
