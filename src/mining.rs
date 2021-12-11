@@ -1,9 +1,14 @@
 use crate::gpu::{GPU, WindowsGPU};
-use crate::rig::{Rig, RigProcess};
+use crate::rig::{Rig, RigProcess, RigState};
 
 pub struct Mining;
 
+
 impl Mining {
+    pub fn restart() -> RigState {
+        RigState::Mining
+    }
+
     pub fn is_healthy(gpu: &WindowsGPU) -> bool {
         return match gpu.get_util() {
             Ok(util) => { util.load > 0.5 && Self::is_process_running() }

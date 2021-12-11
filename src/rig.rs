@@ -1,10 +1,12 @@
 use sysinfo;
-use sysinfo::{ProcessExt, SystemExt};
+use sysinfo::{Process, ProcessExt, SystemExt};
 
 use crate::mining::Mining;
+use crate::rig::RigState::Idle;
 use crate::WindowsGPU;
 
 #[derive(Debug)]
+#[derive(PartialEq)]
 pub enum RigState {
     Idle,
     Mining,
@@ -42,6 +44,14 @@ impl Rig {
         }
     } yield newState
      */
+
+    pub fn update_state(current: RigState) -> RigState {
+        if current == Idle {
+            Mining::restart()
+        } else {
+            current
+        }
+    }
 
     pub fn current_state(gpu: &WindowsGPU) -> RigState {
         if Mining::is_healthy(gpu) {
