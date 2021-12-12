@@ -1,6 +1,5 @@
 use crate::config::Config;
 use crate::gpu::{GPU, WindowsGPU};
-use crate::mining::Mining;
 use crate::rig::Rig;
 
 mod gpu;

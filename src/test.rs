@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use crate::{Config, config, GPU, main, Rig, WindowsGPU};
+    use crate::{Config, config, GPU, Rig, WindowsGPU};
     use crate::mining::Mining;
 
     #[test]
@@ -18,7 +18,7 @@ mod tests {
     fn mining_gets_state() {
         let conf: Config = config::json();
         let wgpu: WindowsGPU = GPU::new(conf.py_gputil, conf.py_exec);
-        let state = Rig::get_state(&wgpu);
+        let _state = Rig::get_state(&wgpu);
     }
 
     // #[test]

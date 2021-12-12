@@ -1,9 +1,4 @@
-use std::{thread as std_thread, time};
-use std::collections::HashSet;
-use std::process::Command;
-
-use crossbeam::thread;
-use sysinfo::{ProcessExt, Signal, SystemExt};
+use sysinfo::{ProcessExt, SystemExt};
 
 use crate::Config;
 use crate::gpu::{GPU, GPULoad, WindowsGPU};
@@ -19,10 +14,6 @@ pub enum Rig {
 impl Rig {
     pub fn get_state(gpu: &WindowsGPU) -> Rig {
         let load: GPULoad = gpu.get_util().expect("error getting gpu util");
-
-        // DEBUG
-        // sysinfo::System::new_all().processes().values().for_each(|x| println!("{:?}", x));
-
         let sys = sysinfo::System::new_all();
         match sys
             .processes()
