@@ -16,7 +16,7 @@ fn main() {
     println!("Hashman [INFO] config: {:?}", conf);
     let wgpu: WindowsGPU = GPU::new(conf.py_gputil.clone(), conf.py_exec.clone());
 
-    let current: Rig = Mining::get_state(&wgpu);
+    let current: Rig = Rig::get(&wgpu);
     println!("Hashman [INFO] Mining::get_state {:?}", current);
 
     let updated: Rig = current.move_state(&conf);

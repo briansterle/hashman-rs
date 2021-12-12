@@ -12,9 +12,16 @@ use crate::rig::Rig;
 pub struct Mining;
 
 
-const NICE_HASH_BINARY: &'static str = "app_nhm";
-
-fn get_hash_bins() -> HashSet<&'static str> { HashSet::from(["app_nhm", "nicehash", "hash", "nice"]) }
+fn get_hash_bins() -> HashSet<&'static str> {
+    HashSet::from(
+        [
+            "app_nhm",
+            "nicehash",
+            "hash",
+            "nice",
+        ]
+    )
+}
 
 impl Mining {
     pub fn restart_async(config: &Config) -> Result<Rig, ()> {
@@ -26,7 +33,7 @@ impl Mining {
         Ok(Rig::Mining(false))
     }
 
-    pub fn restart(config: &Config) -> Result<Rig, Rig> {
+    fn restart(config: &Config) -> Result<Rig, Rig> {
         let output = Command::new(&config.miner_exe)
             .output()
             .expect("failed to start mining process");
@@ -45,7 +52,7 @@ impl Mining {
     pub fn is_hash_binary(proc_name: &str) -> bool {
         get_hash_bins()
             .iter()
-            .any(|bin| proc_name.to_lowercase().contains(proc_name))
+            .any(|bin| proc_name.to_lowercase().contains(bin))
     }
 
     pub fn kill_all() -> bool {
@@ -65,38 +72,6 @@ impl Mining {
                 // ensure proc is killed
             });
         kill
-    }
-
-    pub fn get_state(gpu: &WindowsGPU) -> Rig {
-        let load: GPULoad = gpu.get_util().expect("error getting gpu util");
-
-        // DEBUG
-        // sysinfo::System::new_all().processes().values().for_each(|x| println!("{:?}", x));
-
-        let sys = sysinfo::System::new_all();
-        match sys
-            .processes()
-            .values()
-            .find(|p| p.name().to_lowercase().contains(NICE_HASH_BINARY)
-            ) {
-            Some(_) if (load.is_hot()) => {
-                println!("hot & mining");
-                Rig::Mining(false)
-            }
-            Some(_) => { // not hot, but mining
-                println!("not hot, but Failure[Mining]");
-                Mining::kill_all();
-                Rig::Mining(true)
-            }
-            None if load.is_hot() => {
-                println!("hot & gaming");
-                Rig::Gaming(false)
-            }
-            None => { // not hot, not mining
-                println!("system idle");
-                Rig::Idle(false)
-            }
-        }
     }
 }
 
