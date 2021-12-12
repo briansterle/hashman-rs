@@ -1,21 +1,28 @@
 #[cfg(test)]
 mod tests {
-    use crate::{Config, config, main};
+    use crate::{Config, config, GPU, main, Rig, WindowsGPU};
     use crate::mining::Mining;
 
     #[test]
-    fn parse_config() {
+    fn parses_config() {
         let config: Config = config::json();
         assert!(config.miner_exe.ends_with("NiceHashMiner.exe"));
     }
 
     #[test]
-    fn stop_mining() {
+    fn mining_kills_all() {
         Mining::kill_all();
     }
 
     #[test]
-    fn app_works() {
-        main();
+    fn mining_gets_state() {
+        let conf: Config = config::json();
+        let wgpu: WindowsGPU = GPU::new(conf.py_gputil, conf.py_exec);
+        let state = Mining::get_state(&wgpu);
     }
+
+    // #[test]
+    // fn app_works() {
+    //     main();
+    // }
 }

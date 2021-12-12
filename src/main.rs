@@ -1,6 +1,7 @@
 use crate::config::Config;
 use crate::gpu::{GPU, WindowsGPU};
-use crate::rig::{Rig, RigState};
+use crate::mining::Mining;
+use crate::rig::Rig;
 
 mod gpu;
 mod rig;
@@ -15,9 +16,9 @@ fn main() {
     println!("Hashman [INFO] config: {:?}", conf);
     let wgpu: WindowsGPU = GPU::new(conf.py_gputil.clone(), conf.py_exec.clone());
 
-    let current: RigState = Rig::current_state(&wgpu);
-    println!("Hashman [INFO] Rig::current_state {:?}", current);
+    let current: Rig = Mining::get_state(&wgpu);
+    println!("Hashman [INFO] Mining::get_state {:?}", current);
 
-    let updated: RigState = Rig::update_state(current, &conf);
-    println!("Hashman [INFO] Rig::updated_state {:?}", updated);
+    let updated: Rig = current.move_state(&conf);
+    println!("Hashman [INFO] rig::move_state {:?}", updated);
 }
