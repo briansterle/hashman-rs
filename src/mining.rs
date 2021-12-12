@@ -57,7 +57,7 @@ impl Mining {
             .filter(|p| Mining::is_hash_binary(p.name()))
             .for_each(|p| {
                 let s = sysinfo::System::new();
-                while !s.process(p.pid()).is_none() {
+                while s.process(p.pid()).is_some() {
                     kill |= p.kill(Signal::Kill);
                     std_thread::sleep(time::Duration::from_millis(420));
                 }
