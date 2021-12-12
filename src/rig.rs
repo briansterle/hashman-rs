@@ -8,6 +8,8 @@ pub enum RigState {
     Gaming(bool),
 }
 
+impl RigState {}
+
 impl PartialEq for RigState {
     fn eq(&self, other: &Self) -> bool {
         format!("{:?}", self) == format!("{:?}", other)

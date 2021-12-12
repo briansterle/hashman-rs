@@ -1,5 +1,4 @@
 use std::process::Command;
-use std::time::Duration;
 
 use crossbeam::thread;
 use sysinfo::{ProcessExt, Signal, SystemExt};
@@ -11,13 +10,7 @@ use crate::rig::RigState;
 pub struct Mining;
 
 
-fn background_process(process: &String) -> String {
-    let mut prefix = "START /B ".to_owned();
-    prefix.push_str(process);
-    println!("{}", prefix);
-    prefix
-}
-
+const NICE_HASH_BINARY: &'static str = "app_nhm";
 
 impl Mining {
     pub fn restart_async(config: &Config) -> Result<RigState, ()> {
@@ -46,10 +39,11 @@ impl Mining {
     }
 
     pub fn kill_all() {
-        sysinfo::System::new_all()
-            .processes()
-            .values()
-            .filter(|p| p.name().to_lowercase().contains("nicehash"))
+        let system = sysinfo::System::new_all();
+        let pid_map = system.processes();
+        let ps = pid_map.values();
+        ps
+            .filter(|p| p.name().to_lowercase().contains(NICE_HASH_BINARY))
             .for_each(|p| {
                 let kill = p.kill(Signal::Kill);
                 let s = sysinfo::System::new();
@@ -67,7 +61,7 @@ impl Mining {
         match sysinfo::System::new_all()
             .processes()
             .values()
-            .find(|p| p.name().to_lowercase().contains("app_nhm")
+            .find(|p| p.name().to_lowercase().contains(NICE_HASH_BINARY)
             ) {
             Some(_) if (load.is_hot()) => {
                 println!("hot & mining");

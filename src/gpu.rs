@@ -11,9 +11,9 @@ impl GPULoad {
         println!("is_hot? {}", self.load);
         self.load > 0.5
     }
-    pub fn not_hot(&self) -> bool {
-        !self.is_hot()
-    }
+    // pub fn not_hot(&self) -> bool {
+    //     !self.is_hot()
+    // }
 }
 
 

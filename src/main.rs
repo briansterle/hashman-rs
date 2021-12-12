@@ -6,6 +6,7 @@ mod gpu;
 mod rig;
 mod mining;
 mod config;
+mod test;
 
 fn main() {
     println!("Hashman [INFO] Reading config...");
