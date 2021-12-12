@@ -6,7 +6,6 @@ use crossbeam::thread;
 use sysinfo::{ProcessExt, Signal, SystemExt};
 
 use crate::Config;
-use crate::gpu::GPU;
 use crate::rig::Rig;
 
 pub struct Mining;
