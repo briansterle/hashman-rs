@@ -18,7 +18,7 @@ mod tests {
     fn mining_gets_state() {
         let conf: Config = config::json();
         let wgpu: WindowsGPU = GPU::new(conf.py_gputil, conf.py_exec);
-        let state = Rig::get(&wgpu);
+        let state = Rig::get_state(&wgpu);
     }
 
     // #[test]

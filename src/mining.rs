@@ -57,19 +57,15 @@ impl Mining {
 
     pub fn kill_all() -> bool {
         let system = sysinfo::System::new_all();
-        let pid_map = system.processes();
-        let ps = pid_map.values();
+        let ps = system.processes().values();
         let mut kill = false;
         ps
             .filter(|p| Mining::is_hash_binary(p.name()))
             .for_each(|p| {
-                let s = sysinfo::System::new();
-                while s.process(p.pid()).is_some() {
+                while system.process(p.pid()).is_some() {
                     kill |= p.kill(Signal::Kill);
                     std_thread::sleep(time::Duration::from_millis(420));
                 }
-
-                // ensure proc is killed
             });
         kill
     }

@@ -17,7 +17,7 @@ pub enum Rig {
 }
 
 impl Rig {
-    pub fn get(gpu: &WindowsGPU) -> Rig {
+    pub fn get_state(gpu: &WindowsGPU) -> Rig {
         let load: GPULoad = gpu.get_util().expect("error getting gpu util");
 
         // DEBUG
