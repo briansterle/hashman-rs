@@ -1,8 +1,12 @@
+use std::process::Command;
 use sysinfo::{ProcessExt, SystemExt};
+use std::str;
+
 
 use crate::Config;
 use crate::gpu::{GPU, GPULoad, WindowsGPU};
 use crate::mining::Mining;
+
 
 #[derive(Debug)]
 pub enum Rig {
@@ -12,6 +16,20 @@ pub enum Rig {
 }
 
 impl Rig {
+
+    pub fn tasks() -> Vec<String> {
+        let output = Command::new("tasklist.exe")
+        .output()
+        .unwrap();
+        let stdout = output.stdout;
+        // let out = String::from_utf8_lossy(&stdout);
+        let out = str::from_utf8(&stdout).unwrap();
+
+        out.split("\n")
+            .map(str::to_string)
+            .collect()
+    }
+
     pub fn get_state(gpu: &WindowsGPU) -> Rig {
         let load: GPULoad = gpu.get_util().expect("error getting gpu util");
         let sys = sysinfo::System::new_all();
