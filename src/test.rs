@@ -30,8 +30,9 @@ mod tests {
     let _state = Rig::get_state(&wgpu);
   }
 
-  // #[test]
-  // fn app_works() {
-  //     main();
-  // }
+  #[test]
+  fn hash_binary() {
+      let is = Mining::is_hash_binary("nicehash");
+      assert!(is);
+  }
 }
