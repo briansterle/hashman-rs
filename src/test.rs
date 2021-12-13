@@ -18,7 +18,10 @@ mod tests {
     #[test]
     fn gets_tasks() {
         let tasks = Rig::tasks();
-        assert!(!tasks.is_empty())
+        assert!(!&tasks.is_empty());
+
+        let tasks_ref  = &mut tasks.into_iter();
+        assert!(tasks_ref.any(|s| s.contains("cargo")));
     }
     
     #[test]
