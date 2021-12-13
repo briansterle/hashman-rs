@@ -66,7 +66,7 @@ impl Mining {
                     std_thread::sleep(time::Duration::from_millis(420));
                 }
             });
-        kill
+        killed
     }
 }
 
