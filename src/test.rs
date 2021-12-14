@@ -2,9 +2,9 @@
 mod tests {
   use sysinfo::{Process, ProcessExt, SystemExt};
 
-  use crate::{config, Config, GPU, Rig, WindowsGPU};
   use crate::mining::Mining;
   use crate::sys::Sys;
+  use crate::{config, Config, Rig, WindowsGPU, GPU};
 
   #[test]
   fn config_parses() {
@@ -32,16 +32,11 @@ mod tests {
   }
 
   #[test]
-  fn syts_gets_cargo_process() {
+  fn sys_gets_cargo_process() {
     let sys = Sys {
       system: sysinfo::System::new_all(),
     };
 
-    fn filter_ps(p: &Process) -> bool {
-      p.name().to_lowercase().contains("cargo")
-    }
-
-    // let ps = sys.processes_with(|p| p.name().to_lowercase().contains("cargo"));
     let ps = sys.processes_matching("cargo");
     assert!(!ps.is_empty());
   }

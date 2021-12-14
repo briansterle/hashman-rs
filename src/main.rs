@@ -1,7 +1,7 @@
-use sysinfo::SystemExt;
+use sysinfo::{System, SystemExt};
 
 use crate::config::Config;
-use crate::gpu::{GPU, WindowsGPU};
+use crate::gpu::{WindowsGPU, GPU};
 use crate::rig::Rig;
 use crate::sys::Sys;
 
@@ -15,7 +15,7 @@ mod test;
 
 fn main() {
   let sys = Sys {
-    system: sysinfo::System::new_all(),
+    system: System::new_all(),
   };
 
   println!("Hashman [INFO] Reading config...");
