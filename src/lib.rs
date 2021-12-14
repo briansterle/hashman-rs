@@ -43,10 +43,12 @@ pub fn run(env: HashEnv) -> Rig {
 mod tests {
   use sysinfo::SystemExt;
 
+  use crate::config;
   use crate::config::Config;
+  use crate::gpu::{WindowsGPU, GPU};
+  use crate::mining::Mining;
   use crate::rig::Rig;
   use crate::sys::Sys;
-  use crate::{config, Mining, WindowsGPU, GPU};
 
   #[test]
   fn config_parses() {

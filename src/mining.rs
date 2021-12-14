@@ -8,7 +8,7 @@ use sysinfo::{ProcessExt, Signal};
 use crate::rig::Rig;
 use crate::Sys;
 
-pub struct Mining;
+pub struct Mining {}
 
 // todo get from &Config
 fn get_hash_bins() -> HashSet<&'static str> {
