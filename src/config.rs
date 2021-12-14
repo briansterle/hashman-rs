@@ -17,5 +17,5 @@ pub struct Config {
   pub py_exec: String,
   pub py_gputil: String,
   pub gpu_primary: Vec<String>,
-  pub gpu_secondary: Vec<String, >,
+  pub gpu_secondary: Vec<String>,
 }

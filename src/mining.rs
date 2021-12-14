@@ -1,12 +1,12 @@
+use std::{thread as std_thread, time};
 use std::collections::HashSet;
 use std::process::Command;
-use std::{thread as std_thread, time};
 
 use crossbeam::thread;
 use sysinfo::{ProcessExt, Signal, SystemExt};
 
+use crate::{Config, Sys};
 use crate::rig::Rig;
-use crate::Config;
 
 pub struct Mining;
 
@@ -43,11 +43,11 @@ impl Mining {
       .any(|bin| proc_name.to_lowercase().contains(bin))
   }
 
-  pub fn kill_all() -> bool {
-    let system = sysinfo::System::new_all();
-    let ps = system.processes().values();
+  pub fn kill_all(sys: &Sys) -> bool {
     let mut killed = false;
-    ps.filter(|p| Mining::is_hash_binary(p.name()))
+    sys
+      .processes()
+      .filter(|p| Mining::is_hash_binary(p.name()))
       .for_each(|p| {
         while !killed {
           killed |= p.kill(Signal::Kill);
