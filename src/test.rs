@@ -1,12 +1,14 @@
 #[cfg(test)]
 mod tests {
+  use crate::{config, Config, GPU, Rig, WindowsGPU};
   use crate::mining::Mining;
-  use crate::{config, Config, Rig, WindowsGPU, GPU};
 
   #[test]
   fn parses_config() {
     let config: Config = config::json();
     assert!(config.miner_exe.ends_with("NiceHashMiner.exe"));
+    assert_eq!(config.gpu_primary, vec!["game.exe"]);
+    assert_eq!(config.gpu_secondary, vec!["nicehash.exe"]);
   }
 
   // #[test]
