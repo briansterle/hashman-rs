@@ -10,8 +10,8 @@ mod tests {
   fn config_parses() {
     let config: Config = config::json();
     assert!(config.miner_exe.ends_with("NiceHashMiner.exe"));
-    assert_eq!(config.gpu_primary, vec!["game.exe"]);
-    assert_eq!(config.gpu_secondary, vec!["nicehash.exe"]);
+    assert_eq!(config.gpu_p1, vec!["game.exe"]);
+    assert_eq!(config.gpu_p2, vec!["nicehash.exe"]);
   }
 
   #[test]

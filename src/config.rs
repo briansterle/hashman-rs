@@ -16,6 +16,6 @@ pub struct Config {
   pub miner_exe: String,
   pub py_exec: String,
   pub py_gputil: String,
-  pub gpu_primary: Vec<String>,
-  pub gpu_secondary: Vec<String>,
+  pub gpu_p1: Vec<String>,
+  pub gpu_p2: Vec<String>,
 }

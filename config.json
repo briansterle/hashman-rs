@@ -2,10 +2,10 @@
   "miner_exe": "C:\\Users\\brian\\AppData\\Local\\Programs\\NiceHash Miner\\NiceHashMiner.exe",
   "py_exec": "python",
   "py_gputil": "src\\python\\get_gpu_util.py",
-  "gpu_primary": [
+  "gpu_p1": [
     "game.exe"
   ],
-  "gpu_secondary": [
+  "gpu_p2": [
     "nicehash.exe"
   ]
 }
