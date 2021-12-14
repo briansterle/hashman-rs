@@ -37,7 +37,7 @@ impl Mining {
   }
 
   pub fn is_hash_binary(proc_name: &str) -> bool {
-    println!("checking: {}", proc_name);
+    // println!("checking: {}", proc_name); // todo debug log
     get_hash_bins()
       .iter()
       .any(|bin| proc_name.to_lowercase().contains(bin))
