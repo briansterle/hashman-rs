@@ -33,16 +33,14 @@ impl Sys {
     &self,
     gp1s: Vec<String>,
     gp2s: Vec<String>,
-  ) -> HashMap<&str, Vec<&Process>> {
-    let mut priority_ps = HashMap::new();
-    priority_ps.insert("p1", vec![]);
-    priority_ps.insert("p2", vec![]);
+  ) -> HashMap<u8, Vec<&Process>> {
+    let mut priority_ps = HashMap::from([(1, vec![]), (2, vec![])]);
 
     for p in self.processes() {
       if gp1s.contains(&p.name().to_owned()) {
-        priority_ps.get_mut("p1").unwrap().append(&mut vec![p]);
+        priority_ps.get_mut(&1).unwrap().append(&mut vec![p]);
       } else if gp2s.contains(&p.name().to_owned()) {
-        priority_ps.get_mut("p2").unwrap().append(&mut vec![p]);
+        priority_ps.get_mut(&2).unwrap().append(&mut vec![p]);
       }
     }
     priority_ps

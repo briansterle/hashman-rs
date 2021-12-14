@@ -103,7 +103,7 @@ mod tests {
     let pmap = sys.priority_processes(config::json().gpu_p1, config::json().gpu_p2);
     println!("{:?}", pmap);
     assert_eq!(pmap.len(), 2);
-    assert!(pmap.get("p1").is_some());
-    assert!(pmap.get("p2").is_some());
+    assert!(pmap.get(&1).is_some());
+    assert!(pmap.get(&2).is_some());
   }
 }
