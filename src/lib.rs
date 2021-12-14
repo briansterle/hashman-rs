@@ -15,7 +15,6 @@ mod gpu;
 mod mining;
 mod rig;
 mod sys;
-mod test;
 
 pub struct HashEnv {
   conf: Config,
