@@ -1,7 +1,8 @@
-use hashman_rs::{run, HashEnv};
+use hashman_rs::{HashEnv, Rig};
 
 fn main() {
   let env: HashEnv = HashEnv::setup();
-  let updated = run(env);
+  println!("Hashman [INFO] env={:#?}", env);
+  let updated: Rig = env.run();
   println!("Hashman [INFO] rig::move_state {:?}", updated);
 }

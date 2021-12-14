@@ -21,6 +21,7 @@ pub trait GPU {
   }
 }
 
+#[derive(Debug)]
 pub struct WindowsGPU {
   py_gputil: String,
   py_exec: String,

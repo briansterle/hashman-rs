@@ -4,6 +4,7 @@ use std::str;
 
 use sysinfo::{Pid, Process, ProcessExt, SystemExt};
 
+#[derive(Debug)]
 pub struct Sys {
   pub system: sysinfo::System,
 }

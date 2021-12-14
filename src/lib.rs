@@ -15,6 +15,7 @@ mod mining;
 mod rig;
 mod sys;
 
+#[derive(Debug)]
 pub struct HashEnv {
   conf: Config,
   sys: Sys,
@@ -31,12 +32,12 @@ impl HashEnv {
       gpu: GPU::new(&config::json().py_gputil, &config::json().py_exec),
     }
   }
-}
 
-pub fn run(env: HashEnv) -> Rig {
-  let current: Rig = Rig::state(&env.sys, &env.gpu);
-  println!("Hashman [INFO] Rig::state {:?}", current);
-  current.move_state(&env.conf)
+  pub fn run(&self) -> Rig {
+    let current: Rig = Rig::state(&self.sys, &self.gpu);
+    println!("Hashman [INFO] Rig::state {:?}", current);
+    current.move_state(&self.conf)
+  }
 }
 
 #[cfg(test)]
