@@ -22,7 +22,7 @@ mod tests {
 
     let conf: Config = config::json();
     let wgpu: WindowsGPU = GPU::new(conf.py_gputil, conf.py_exec);
-    let _state = Rig::get_state(&sys, &wgpu);
+    let _state = Rig::state(&sys, &wgpu);
   }
 
   #[test]

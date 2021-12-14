@@ -3,9 +3,9 @@ use std::str;
 
 use sysinfo::{ProcessExt, SystemExt};
 
-use crate::{Config, Sys};
-use crate::gpu::{GPU, GPULoad, WindowsGPU};
+use crate::gpu::{GPULoad, WindowsGPU, GPU};
 use crate::mining::Mining;
+use crate::{Config, Sys};
 
 #[derive(Debug)]
 pub enum Rig {
@@ -15,7 +15,7 @@ pub enum Rig {
 }
 
 impl Rig {
-  pub fn get_state(sys: &Sys, gpu: &WindowsGPU) -> Rig {
+  pub fn state(sys: &Sys, gpu: &WindowsGPU) -> Rig {
     let load: GPULoad = gpu.get_util().expect("error getting gpu util");
 
     match sys.processes().find(|p| Mining::is_hash_binary(p.name())) {
