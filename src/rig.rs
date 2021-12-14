@@ -39,7 +39,8 @@ impl Rig {
 
   pub fn move_state(self, config: &Config) -> Rig {
     if self == Rig::Idle(false) {
-      Mining::restart_async(config).expect("oops")
+      let mine = Command::new(&config.miner_exe);
+      Mining::restart_async(mine).expect("oops")
     } else {
       self
     }

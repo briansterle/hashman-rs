@@ -1,12 +1,12 @@
-use std::{thread as std_thread, time};
 use std::collections::HashSet;
 use std::process::Command;
+use std::{thread as std_thread, time};
 
 use crossbeam::thread;
 use sysinfo::{ProcessExt, Signal, SystemExt};
 
-use crate::{Config, Sys};
 use crate::rig::Rig;
+use crate::{Config, Sys};
 
 pub struct Mining;
 
@@ -15,18 +15,16 @@ fn get_hash_bins() -> HashSet<&'static str> {
 }
 
 impl Mining {
-  pub fn restart_async(config: &Config) -> Result<Rig, ()> {
+  pub fn restart_async(mine: Command) -> Result<Rig, ()> {
     thread::scope(|scope| {
-      scope.spawn(move |_| Mining::restart(config));
+      scope.spawn(move |_| Mining::restart(mine));
     })
     .unwrap();
     Ok(Rig::Mining(false))
   }
 
-  fn restart(config: &Config) -> Result<Rig, Rig> {
-    let output = Command::new(&config.miner_exe)
-      .output()
-      .expect("failed to start mining process");
+  fn restart(mut mine: Command) -> Result<Rig, Rig> {
+    let output = mine.output().expect("failed to start mining process");
     match output.status.code() {
       Some(code) if code == 0 => Ok(Rig::Mining(false)),
       Some(code) => {
