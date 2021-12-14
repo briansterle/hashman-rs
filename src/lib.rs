@@ -35,7 +35,7 @@ impl HashEnv {
 
   pub fn run(&self) -> Rig {
     let current: Rig = Rig::state(&self.sys, &self.gpu);
-    println!("Hashman [INFO] Rig::state {:?}", current);
+    println!("Hashman [INFO] Rig::state = {:?}", current);
     current.move_state(&self.conf)
   }
 }
