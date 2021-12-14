@@ -10,8 +10,9 @@ use crate::Sys;
 
 pub struct Mining;
 
+// todo get from &Config
 fn get_hash_bins() -> HashSet<&'static str> {
-  HashSet::from(["app_nhm", "nicehash", "hash", "nice"])
+  HashSet::from(["app_nhm", "nicehash", "nice"])
 }
 
 impl Mining {
@@ -36,12 +37,14 @@ impl Mining {
   }
 
   pub fn is_hash_binary(proc_name: &str) -> bool {
+    println!("checking: {}", proc_name);
     get_hash_bins()
       .iter()
       .any(|bin| proc_name.to_lowercase().contains(bin))
   }
 
   pub fn kill_all(sys: &Sys) -> bool {
+    println!("Killing all mining processes");
     let mut killed = false;
     sys
       .processes()

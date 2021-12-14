@@ -38,9 +38,13 @@ impl GPU for WindowsGPU {
       .expect("failed to execute process");
 
     match output.status.code() {
-      Some(code) if code == 0 => Ok(GPULoad {
-        load: WindowsGPU::parse_usage(output.stdout),
-      }),
+      Some(code) if code == 0 => {
+        let load = GPULoad {
+          load: WindowsGPU::parse_usage(output.stdout),
+        };
+        println!("gpu_load: {:?}", load);
+        Ok(load)
+      }
       Some(_) => Err(String::from("Exited with non-zero code")),
       None => Err(String::from("Exited with missing code")),
     }
