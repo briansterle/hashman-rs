@@ -9,9 +9,9 @@ use crate::{Config, Sys};
 
 #[derive(Debug)]
 pub enum Rig {
-  Idle(bool),
-  Mining(bool),
-  Gaming(bool),
+  Idle,
+  Mining,
+  Gaming,
 }
 
 impl Rig {
@@ -19,26 +19,26 @@ impl Rig {
     let load: GPULoad = gpu.get_util().expect("error getting gpu util");
 
     match sys.processes().find(|p| Mining::is_hash_binary(p.name())) {
-      Some(_) if (load.is_hot()) => Rig::Mining(false),
+      Some(_) if (load.is_hot()) => Rig::Mining,
       None if load.is_hot() => {
         println!("hot & gaming");
-        Rig::Gaming(false)
+        Rig::Gaming
       }
       Some(_) => {
         // not hot, but mining
         Mining::kill_all(sys);
-        Rig::Idle(true)
+        Rig::Idle
       }
       None => {
         // not hot, not mining
         println!("system idle");
-        Rig::Idle(false)
+        Rig::Idle
       }
     }
   }
 
   pub fn move_state(self, config: &Config) -> Rig {
-    if self == Rig::Idle(false) {
+    if self == Rig::Idle {
       let mine = Command::new(&config.miner_exe);
       Mining::restart_async(mine).expect("oops")
     } else {

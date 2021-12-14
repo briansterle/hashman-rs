@@ -20,18 +20,18 @@ impl Mining {
       scope.spawn(move |_| Mining::restart(mine));
     })
     .unwrap();
-    Ok(Rig::Mining(false))
+    Ok(Rig::Mining)
   }
 
   fn restart(mut mine: Command) -> Result<Rig, Rig> {
     let output = mine.output().expect("failed to start mining process");
     match output.status.code() {
-      Some(code) if code == 0 => Ok(Rig::Mining(false)),
+      Some(code) if code == 0 => Ok(Rig::Mining),
       Some(code) => {
         println!("Unexpectedly exited mining exe with status code: {}", code);
-        Err(Rig::Idle(false))
+        Err(Rig::Idle)
       }
-      None => Err(Rig::Idle(false)),
+      None => Err(Rig::Idle),
     }
   }
 
