@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use sysinfo::{System, SystemExt};
 
 use crate::config::Config;
@@ -17,11 +19,9 @@ fn main() {
   let sys = Sys {
     system: System::new_all(),
   };
-
-  println!("Hashman [INFO] Reading config...");
   let conf: Config = config::json();
 
-  println!("Hashman [INFO] config: {:?}", conf);
+  println!("Hashman [INFO] Read config: {:#?}", conf);
   let wgpu: WindowsGPU = GPU::new(conf.py_gputil.clone(), conf.py_exec.clone());
 
   let current: Rig = Rig::state(&sys, &wgpu);

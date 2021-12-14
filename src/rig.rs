@@ -1,7 +1,6 @@
 use std::process::Command;
-use std::str;
 
-use sysinfo::{ProcessExt, SystemExt};
+use sysinfo::ProcessExt;
 
 use crate::gpu::{GPULoad, WindowsGPU, GPU};
 use crate::mining::Mining;

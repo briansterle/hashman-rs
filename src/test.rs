@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-  use sysinfo::{Process, ProcessExt, SystemExt};
+  use sysinfo::SystemExt;
 
   use crate::mining::Mining;
   use crate::sys::Sys;

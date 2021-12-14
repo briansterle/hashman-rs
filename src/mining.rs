@@ -3,10 +3,10 @@ use std::process::Command;
 use std::{thread as std_thread, time};
 
 use crossbeam::thread;
-use sysinfo::{ProcessExt, Signal, SystemExt};
+use sysinfo::{ProcessExt, Signal};
 
 use crate::rig::Rig;
-use crate::{Config, Sys};
+use crate::Sys;
 
 pub struct Mining;
 
