@@ -15,6 +15,13 @@ mod rig;
 mod sys;
 mod test;
 
+fn run(conf: &Config, sys: &Sys, gpu: &WindowsGPU) -> Rig {
+  let current: Rig = Rig::state(sys, gpu);
+  println!("Hashman [INFO] Rig::get_state {:?}", current);
+
+  current.move_state(&conf)
+}
+
 fn main() {
   let sys = Sys {
     system: System::new_all(),
@@ -22,11 +29,8 @@ fn main() {
   let conf: Config = config::json();
 
   println!("Hashman [INFO] Read config: {:#?}", conf);
-  let wgpu: WindowsGPU = GPU::new(conf.py_gputil.clone(), conf.py_exec.clone());
+  let gpu: WindowsGPU = GPU::new(conf.py_gputil.clone(), conf.py_exec.clone());
 
-  let current: Rig = Rig::state(&sys, &wgpu);
-  println!("Hashman [INFO] Rig::get_state {:?}", current);
-
-  let updated: Rig = current.move_state(&conf);
+  let updated = run(&conf, &sys, &gpu);
   println!("Hashman [INFO] rig::move_state {:?}", updated);
 }
