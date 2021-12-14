@@ -9,7 +9,6 @@ pub use crate::rig::Rig;
 pub use crate::sys::Sys;
 
 mod config;
-mod gaming;
 mod gpu;
 mod mining;
 mod rig;
@@ -93,5 +92,18 @@ mod tests {
 
     let tasks_ref = &mut tasks.into_iter();
     assert!(tasks_ref.any(|s| s.contains("cargo")));
+  }
+
+  #[test]
+  fn gets_priority_processes() {
+    let sys = Sys {
+      system: sysinfo::System::new_all(),
+    };
+
+    let pmap = sys.priority_processes(config::json().gpu_p1, config::json().gpu_p2);
+    println!("{:?}", pmap);
+    assert_eq!(pmap.len(), 2);
+    assert!(pmap.get("p1").is_some());
+    assert!(pmap.get("p2").is_some());
   }
 }

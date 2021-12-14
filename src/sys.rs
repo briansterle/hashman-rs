@@ -1,4 +1,5 @@
 use std::collections::hash_map::Values;
+use std::collections::HashMap;
 use std::process::Command;
 use std::str;
 
@@ -26,5 +27,24 @@ impl Sys {
       .processes()
       .filter(|p| p.name().to_lowercase().contains(needle))
       .collect()
+  }
+
+  pub fn priority_processes(
+    &self,
+    gp1s: Vec<String>,
+    gp2s: Vec<String>,
+  ) -> HashMap<&str, Vec<&Process>> {
+    let mut priority_ps = HashMap::new();
+    priority_ps.insert("p1", vec![]);
+    priority_ps.insert("p2", vec![]);
+
+    for p in self.processes() {
+      if gp1s.contains(&p.name().to_owned()) {
+        priority_ps.get_mut("p1").unwrap().append(&mut vec![p]);
+      } else if gp2s.contains(&p.name().to_owned()) {
+        priority_ps.get_mut("p2").unwrap().append(&mut vec![p]);
+      }
+    }
+    priority_ps
   }
 }
