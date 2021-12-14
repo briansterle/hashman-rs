@@ -13,7 +13,7 @@ impl Sys {
     let output = Command::new("tasklist.exe").output().unwrap();
     let stdout = output.stdout;
     let out = str::from_utf8(&stdout).unwrap();
-    out.split("\n").map(str::to_string).collect()
+    out.split('\n').map(str::to_string).collect()
   }
 
   pub fn processes(&self) -> Values<Pid, Process> {

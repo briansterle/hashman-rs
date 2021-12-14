@@ -7,8 +7,7 @@ pub fn read() -> String {
 }
 
 pub fn json() -> Config {
-  let conf = serde_json::from_str(&read()).expect("config.json is invalid");
-  conf
+  serde_json::from_str(&read()).expect("config.json is invalid")
 }
 
 #[derive(Debug, Serialize, Deserialize)]

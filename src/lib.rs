@@ -2,8 +2,7 @@
 
 use sysinfo::{System, SystemExt};
 
-use gpu::{GPULoad, WindowsGPU, GPU};
-use mining::Mining;
+use gpu::{WindowsGPU, GPU};
 
 pub use crate::config::Config;
 pub use crate::rig::Rig;
