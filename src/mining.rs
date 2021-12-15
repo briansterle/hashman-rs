@@ -3,7 +3,7 @@ use std::process::Command;
 use std::{thread as std_thread, time};
 
 use crossbeam::thread;
-use sysinfo::{ProcessExt, Signal};
+use sysinfo::{Process, ProcessExt, Signal};
 
 use crate::rig::Rig;
 use crate::{HashEnv, Sys};
@@ -38,10 +38,13 @@ impl Mining {
 
   pub fn kill_all(sys: &Sys, gpu_p2: &Vec<String>) -> bool {
     println!("Killing all mining processes...");
-    let mut killed = false;
-
     let (_, ps2) = sys.priority_processes(&vec![], gpu_p2);
-    ps2.into_iter().for_each(|p| {
+    Self::kill_processes(ps2)
+  }
+
+  pub fn kill_processes(ps: Vec<&Process>) -> bool {
+    let mut killed = false;
+    ps.into_iter().for_each(|p| {
       while !killed {
         killed |= p.kill(Signal::Kill);
         std_thread::sleep(time::Duration::from_millis(420));

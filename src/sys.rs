@@ -50,6 +50,10 @@ impl Sys {
     (p1, p2)
   }
 
+  pub fn lookup(&self, pid: Pid) -> Option<&Process> {
+    self.system.process(pid)
+  }
+
   #[inline(always)]
   pub fn pretty_proc(p: &Process, p_type: &str) -> String {
     format!(

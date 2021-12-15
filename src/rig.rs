@@ -1,6 +1,6 @@
 use std::process::Command;
 
-use sysinfo::ProcessExt;
+use sysinfo::{Pid, Process, ProcessExt};
 
 use crate::gpu::{GPULoad, WindowsGPU, GPU};
 use crate::mining::Mining;
@@ -11,7 +11,7 @@ pub enum Rig {
   Idle,
   Mining,
   Gaming,
-  Conflict,
+  Conflict { gaming: Vec<Pid>, mining: Vec<Pid> },
 }
 
 impl Rig {
@@ -37,26 +37,41 @@ impl Rig {
 
   pub fn state(env: &HashEnv) -> Self {
     let load: GPULoad = env.gpu.get_util().expect("error getting gpu util");
+
+    fn map_pid(ps: Vec<&Process>) -> Vec<Pid> {
+      ps.into_iter().map(|p| p.pid()).collect()
+    }
+
     let (gaming_ps, mining_ps) = env
       .sys
       .priority_processes(&env.conf.gpu_p1, &env.conf.gpu_p2);
     match (gaming_ps.is_empty(), mining_ps.is_empty()) {
-      (false, false) => Self::Conflict,
+      (false, false) => Self::Conflict {
+        gaming: map_pid(gaming_ps),
+        mining: map_pid(mining_ps),
+      },
       (false, true) => Self::Gaming.or_idle(&load),
       (true, false) => Self::Mining.on_idle(&load, || Mining::kill_all(&env.sys, &env.conf.gpu_p2)),
       (true, true) => Self::Idle,
     }
   }
 
-  pub fn move_state(self, config: &Config) -> Self {
+  pub fn move_state(self, env: &HashEnv) -> Self {
     match self {
-      Self::Idle => {
-        let mine = Command::new(&config.miner_exe);
-        Mining::restart_async(mine).expect("oops")
-      }
+      Self::Idle => Mining::restart_async(Command::new(&env.conf.miner_exe))
+        .expect("failed to restart miner.exe"),
       Self::Mining => self,
       Self::Gaming => self,
-      Self::Conflict => self,
+      Self::Conflict { gaming, mining } => {
+        let mining_processes = mining
+          .into_iter()
+          .map(|pid| env.sys.lookup(pid))
+          .filter(|o| o.is_some())
+          .map(|o| o.unwrap())
+          .collect();
+        Mining::kill_processes(mining_processes);
+        Self::Gaming
+      }
     }
   }
 }
