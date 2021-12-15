@@ -106,4 +106,14 @@ mod tests {
     assert!(pmap.get(&1).is_some());
     assert!(pmap.get(&2).is_some());
   }
+
+  #[test]
+  fn gets_priority_processes_tuple() {
+    let sys = Sys {
+      system: sysinfo::System::new_all(),
+    };
+    let ps = sys.priority_processes_tuple(config::json().gpu_p1, config::json().gpu_p2);
+    assert!(ps.0.is_empty());
+    assert!(ps.1.is_empty());
+  }
 }

@@ -1,0 +1,11 @@
+{
+  "miner_exe": "/mnt/c/Users/brian/AppData/Local/Programs/NiceHash Miner/NiceHashMiner.exe",
+  "py_exec": "python",
+  "py_gputil": "src/python/get_gpu_util.py",
+  "gpu_p1": [
+    "game.exe"
+  ],
+  "gpu_p2": [
+    "nicehash.exe"
+  ]
+}

@@ -18,6 +18,7 @@ impl Sys {
     out.split('\n').map(str::to_string).collect()
   }
 
+  #[inline(always)]
   pub fn processes(&self) -> Values<Pid, Process> {
     self.system.processes().values()
   }
@@ -27,6 +28,25 @@ impl Sys {
       .processes()
       .filter(|p| p.name().to_lowercase().contains(needle))
       .collect()
+  }
+
+  pub fn priority_processes_tuple(
+    &self,
+    gp1s: Vec<String>,
+    gp2s: Vec<String>,
+  ) -> (Vec<&Process>, Vec<&Process>) {
+    let mut p1 = vec![];
+    let mut p2 = vec![];
+
+
+    for p in self.processes() {
+      if gp1s.contains(&p.name().to_owned()) {
+        p1.push(p);
+      } else if gp2s.contains(&p.name().to_owned()) {
+        p2.push(p);
+      }
+    }
+    (p1, p2)
   }
 
   pub fn priority_processes(
