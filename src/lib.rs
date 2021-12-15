@@ -65,12 +65,6 @@ mod tests {
   }
 
   #[test]
-  fn nicehash_is_a_hash_binary() {
-    let is = Mining::is_hash_binary("nicehash");
-    assert!(is);
-  }
-
-  #[test]
   fn sys_gets_cargo_process() {
     let sys = Sys {
       system: sysinfo::System::new_all(),

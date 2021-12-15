@@ -40,8 +40,8 @@ impl Sys {
 
     for p in self.processes() {
       if gp1s.contains(&p.name().to_owned()) {
-        p1.push(p);
         println!("{}", Self::pretty_proc(p, "p1 gaming"));
+        p1.push(p);
       } else if gp2s.contains(&p.name().to_owned()) {
         println!("{}", Self::pretty_proc(p, "p2 mining"));
         p2.push(p);
@@ -50,6 +50,7 @@ impl Sys {
     (p1, p2)
   }
 
+  #[inline(always)]
   pub fn pretty_proc(p: &Process, p_type: &str) -> String {
     format!(
       "Found {} process [ \n\tname: {:#?} \n\tpid: {:?} \n\tparent: {:?} \n\tcmd: {:?} \n\tcpu_usage: {:#?} \n\tstatus: {:#?}\n]",

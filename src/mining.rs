@@ -6,7 +6,7 @@ use crossbeam::thread;
 use sysinfo::{ProcessExt, Signal};
 
 use crate::rig::Rig;
-use crate::Sys;
+use crate::{HashEnv, Sys};
 
 pub struct Mining {}
 
@@ -36,25 +36,17 @@ impl Mining {
     }
   }
 
-  pub fn is_hash_binary(proc_name: &str) -> bool {
-    // println!("checking: {}", proc_name); // todo debug log
-    get_hash_bins()
-      .iter()
-      .any(|bin| proc_name.to_lowercase().contains(bin))
-  }
-
-  pub fn kill_all(sys: &Sys) -> bool {
-    println!("Killing all mining processes");
+  pub fn kill_all(sys: &Sys, gpu_p2: &Vec<String>) -> bool {
+    println!("Killing all mining processes...");
     let mut killed = false;
-    sys
-      .processes()
-      .filter(|p| Mining::is_hash_binary(p.name()))
-      .for_each(|p| {
-        while !killed {
-          killed |= p.kill(Signal::Kill);
-          std_thread::sleep(time::Duration::from_millis(420));
-        }
-      });
+
+    let (_, ps2) = sys.priority_processes(&vec![], gpu_p2);
+    ps2.into_iter().for_each(|p| {
+      while !killed {
+        killed |= p.kill(Signal::Kill);
+        std_thread::sleep(time::Duration::from_millis(420));
+      }
+    });
     killed
   }
 }
