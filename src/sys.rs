@@ -1,5 +1,4 @@
 use std::collections::hash_map::Values;
-use std::collections::HashMap;
 use std::process::Command;
 use std::str;
 
@@ -45,7 +44,7 @@ impl Sys {
     let gp1s = config::json().gpu_p1;
     let gp2s = config::json().gpu_p2;
 
-    for (pid, p) in self.system.processes() {
+    for (_pid, p) in self.system.processes() {
       if gp1s.contains(&p.name().to_owned()) {
         println!("{}", Self::pretty_proc(p, "p1 gaming"));
         p1.push(p);

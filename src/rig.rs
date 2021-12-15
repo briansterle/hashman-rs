@@ -1,10 +1,10 @@
 use std::process::Command;
 
-use sysinfo::{Pid, Process, ProcessExt};
+use sysinfo::{Pid, ProcessExt};
 
-use crate::gpu::{GPULoad, WindowsGPU, GPU};
+use crate::gpu::{GPULoad, GPU};
 use crate::mining::Mining;
-use crate::{Config, HashEnv, Sys};
+use crate::{HashEnv, Sys};
 
 #[derive(Debug, PartialEq)]
 pub enum Rig {

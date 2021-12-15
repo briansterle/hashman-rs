@@ -46,8 +46,6 @@ mod tests {
   use sysinfo::SystemExt;
 
   use crate::config::Config;
-  use crate::gpu::{WindowsGPU, GPU};
-  use crate::mining::Mining;
   use crate::rig::Rig;
   use crate::sys::Sys;
   use crate::{config, HashEnv};
@@ -90,7 +88,7 @@ mod tests {
     let mut sys = Sys {
       system: sysinfo::System::new_all(),
     };
-    let (ps1, ps2) = &mut sys.priority_processes();
+    let (_ps1, _ps2) = &mut sys.priority_processes();
     // assert!(!ps1.is_empty());
     // assert!(!ps2.is_empty()); // must be mining to pass this
   }
