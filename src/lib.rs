@@ -33,7 +33,7 @@ impl HashEnv {
   }
 
   pub fn run(&self) -> Rig {
-    let current: Rig = Rig::state(&self.sys, &self.gpu);
+    let current: Rig = Rig::state(&self);
     println!("Hashman [INFO] Rig::state = {:?}", current);
     current.move_state(&self.conf)
   }
@@ -43,30 +43,25 @@ impl HashEnv {
 mod tests {
   use sysinfo::SystemExt;
 
-  use crate::config;
   use crate::config::Config;
   use crate::gpu::{WindowsGPU, GPU};
   use crate::mining::Mining;
   use crate::rig::Rig;
   use crate::sys::Sys;
+  use crate::{config, HashEnv};
 
   #[test]
   fn config_parses() {
     let config: Config = config::json();
     assert!(config.miner_exe.ends_with("NiceHashMiner.exe"));
     assert_eq!(config.gpu_p1, vec!["game.exe"]);
-    assert_eq!(config.gpu_p2, vec!["nicehash.exe"]);
+    assert_eq!(config.gpu_p2, vec!["NiceHashMiner.exe"]);
   }
 
   #[test]
   fn rig_gets_state() {
-    let sys = Sys {
-      system: sysinfo::System::new_all(),
-    };
-
-    let conf: Config = config::json();
-    let wgpu: WindowsGPU = GPU::new(&conf.py_gputil, &conf.py_exec);
-    let _state = Rig::state(&sys, &wgpu);
+    let env = HashEnv::setup();
+    let _state = Rig::state(&env);
   }
 
   #[test]
@@ -99,21 +94,8 @@ mod tests {
     let sys = Sys {
       system: sysinfo::System::new_all(),
     };
-
-    let pmap = sys.priority_processes(config::json().gpu_p1, config::json().gpu_p2);
-    println!("{:?}", pmap);
-    assert_eq!(pmap.len(), 2);
-    assert!(pmap.get(&1).is_some());
-    assert!(pmap.get(&2).is_some());
-  }
-
-  #[test]
-  fn gets_priority_processes_tuple() {
-    let sys = Sys {
-      system: sysinfo::System::new_all(),
-    };
-    let ps = sys.priority_processes_tuple(config::json().gpu_p1, config::json().gpu_p2);
-    assert!(ps.0.is_empty());
-    assert!(ps.1.is_empty());
+    let (ps1, ps2) = sys.priority_processes(&config::json().gpu_p1, &config::json().gpu_p2);
+    assert!(ps1.is_empty());
+    assert!(!ps2.is_empty()); // must be mining to pass this
   }
 }

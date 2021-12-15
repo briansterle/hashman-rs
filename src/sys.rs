@@ -30,39 +30,36 @@ impl Sys {
       .collect()
   }
 
-  pub fn priority_processes_tuple(
+  pub fn priority_processes(
     &self,
-    gp1s: Vec<String>,
-    gp2s: Vec<String>,
+    gp1s: &Vec<String>,
+    gp2s: &Vec<String>,
   ) -> (Vec<&Process>, Vec<&Process>) {
     let mut p1 = vec![];
     let mut p2 = vec![];
 
-
     for p in self.processes() {
       if gp1s.contains(&p.name().to_owned()) {
         p1.push(p);
+        println!("{}", Self::pretty_proc(p, "p1 gaming"));
       } else if gp2s.contains(&p.name().to_owned()) {
+        println!("{}", Self::pretty_proc(p, "p2 mining"));
         p2.push(p);
       }
     }
     (p1, p2)
   }
 
-  pub fn priority_processes(
-    &self,
-    gp1s: Vec<String>,
-    gp2s: Vec<String>,
-  ) -> HashMap<u8, Vec<&Process>> {
-    let mut priority_ps = HashMap::from([(1, vec![]), (2, vec![])]);
-
-    for p in self.processes() {
-      if gp1s.contains(&p.name().to_owned()) {
-        priority_ps.get_mut(&1).unwrap().append(&mut vec![p]);
-      } else if gp2s.contains(&p.name().to_owned()) {
-        priority_ps.get_mut(&2).unwrap().append(&mut vec![p]);
-      }
-    }
-    priority_ps
+  pub fn pretty_proc(p: &Process, p_type: &str) -> String {
+    format!(
+      "Found {} process [ \n\tname: {:#?} \n\tpid: {:?} \n\tparent: {:?} \n\tcmd: {:?} \n\tcpu_usage: {:#?} \n\tstatus: {:#?}\n]",
+      p_type,
+      p.name(),
+      p.pid(),
+      p.parent(),
+      p.cmd(),
+      p.cpu_usage(),
+      p.status()
+    )
   }
 }
