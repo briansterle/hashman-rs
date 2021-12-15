@@ -65,9 +65,7 @@ impl Rig {
       Self::Conflict { gaming, mining } => {
         let mining_processes = mining
           .into_iter()
-          .map(|pid| env.sys.lookup(pid))
-          .filter(|o| o.is_some())
-          .map(|o| o.unwrap())
+          .filter_map(|pid| env.sys.lookup(pid))
           .collect();
         Mining::kill_processes(mining_processes);
         Self::Gaming
