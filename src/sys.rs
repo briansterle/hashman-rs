@@ -5,6 +5,8 @@ use std::str;
 
 use sysinfo::{Pid, Process, ProcessExt, SystemExt};
 
+use crate::config;
+
 #[derive(Debug)]
 pub struct Sys {
   pub system: sysinfo::System,
@@ -18,27 +20,32 @@ impl Sys {
     out.split('\n').map(str::to_string).collect()
   }
 
+  pub fn to_pids(ps: Vec<&Process>) -> Vec<Pid> {
+    ps.into_iter().map(|p| p.pid()).collect()
+  }
+
   #[inline(always)]
-  pub fn processes(&self) -> Values<Pid, Process> {
+  pub fn processes(&mut self) -> Values<Pid, Process> {
+    self.system.refresh_all();
     self.system.processes().values()
   }
 
-  pub fn processes_matching(&self, needle: &str) -> Vec<&Process> {
+  pub fn processes_matching(&mut self, needle: &str) -> Vec<&Process> {
     self
       .processes()
       .filter(|p| p.name().to_lowercase().contains(needle))
       .collect()
   }
 
-  pub fn priority_processes(
-    &self,
-    gp1s: &Vec<String>,
-    gp2s: &Vec<String>,
-  ) -> (Vec<&Process>, Vec<&Process>) {
+  pub fn priority_processes(&mut self) -> (Vec<&Process>, Vec<&Process>) {
     let mut p1 = vec![];
     let mut p2 = vec![];
+    self.system.refresh_all();
 
-    for p in self.processes() {
+    let gp1s = config::json().gpu_p1;
+    let gp2s = config::json().gpu_p2;
+
+    for (pid, p) in self.system.processes() {
       if gp1s.contains(&p.name().to_owned()) {
         println!("{}", Self::pretty_proc(p, "p1 gaming"));
         p1.push(p);
@@ -50,7 +57,8 @@ impl Sys {
     (p1, p2)
   }
 
-  pub fn lookup(&self, pid: Pid) -> Option<&Process> {
+  pub fn lookup(&mut self, pid: Pid) -> Option<&Process> {
+    self.system.refresh_all();
     self.system.process(pid)
   }
 

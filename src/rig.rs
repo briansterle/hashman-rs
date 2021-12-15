@@ -25,7 +25,7 @@ impl Rig {
 
   fn on_idle<F>(self, load: &GPULoad, on_idle: F) -> Self
   where
-    F: FnOnce() -> bool,
+    F: FnOnce() -> (),
   {
     if load.is_hot() {
       self
@@ -35,39 +35,30 @@ impl Rig {
     }
   }
 
-  pub fn state(env: &HashEnv) -> Self {
+  pub fn state(env: &mut HashEnv) -> Self {
     let load: GPULoad = env.gpu.get_util().expect("error getting gpu util");
 
-    fn map_pid(ps: Vec<&Process>) -> Vec<Pid> {
-      ps.into_iter().map(|p| p.pid()).collect()
-    }
+    let (gaming_ps, mining_ps) = env.sys.priority_processes();
 
-    let (gaming_ps, mining_ps) = env
-      .sys
-      .priority_processes(&env.conf.gpu_p1, &env.conf.gpu_p2);
     match (gaming_ps.is_empty(), mining_ps.is_empty()) {
       (false, false) => Self::Conflict {
-        gaming: map_pid(gaming_ps),
-        mining: map_pid(mining_ps),
+        gaming: Sys::to_pids(gaming_ps),
+        mining: Sys::to_pids(mining_ps),
       },
       (false, true) => Self::Gaming.or_idle(&load),
-      (true, false) => Self::Mining.on_idle(&load, || Mining::kill_all(&env.sys, &env.conf.gpu_p2)),
+      (true, false) => Self::Mining.on_idle(&load, || Mining::kill_processes(&mut env.sys, vec![])),
       (true, true) => Self::Idle,
     }
   }
 
-  pub fn move_state(self, env: &HashEnv) -> Self {
-    match self {
+  pub fn move_state(current: Rig, env: &mut HashEnv) -> Self {
+    match current {
       Self::Idle => Mining::restart_async(Command::new(&env.conf.miner_exe))
         .expect("failed to restart miner.exe"),
-      Self::Mining => self,
-      Self::Gaming => self,
-      Self::Conflict { gaming, mining } => {
-        let mining_processes = mining
-          .into_iter()
-          .filter_map(|pid| env.sys.lookup(pid))
-          .collect();
-        Mining::kill_processes(mining_processes);
+      Self::Mining => current,
+      Self::Gaming => current,
+      Self::Conflict { gaming: _, mining } => {
+        Mining::kill_processes(&mut env.sys, mining);
         Self::Gaming
       }
     }
