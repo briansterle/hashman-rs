@@ -23,7 +23,6 @@ impl Sys {
     ps.into_iter().map(|p| p.pid()).collect()
   }
 
-  #[inline]
   pub fn processes(&mut self) -> Values<Pid, Process> {
     self.refresh_and().system.processes().values()
   }
@@ -62,18 +61,15 @@ impl Sys {
     (p1, p2)
   }
 
-  #[inline]
   pub fn refresh_and(&mut self) -> &mut Self {
     self.system.refresh_processes();
     self
   }
 
-  #[inline]
   pub fn lookup(&mut self, pid: Pid) -> Option<&Process> {
     self.refresh_and().system.process(pid)
   }
 
-  #[inline]
   pub fn pretty_proc(p: &Process, p_type: &str) -> String {
     format!(
       "Found {} process [ \n\tname: {:#?} \n\tpid: {:?} \n\tparent: {:?} \n\tcmd: {:?} \n\tcpu_usage: {:#?} \n\tstatus: {:#?}\n]",

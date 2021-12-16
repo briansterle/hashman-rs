@@ -8,7 +8,6 @@ const JSON_CONF_FILE: &str = if cfg!(windows) {
   "config-linux.json"
 };
 
-#[inline]
 pub fn json() -> Config {
   serde_json::from_str(&fs::read_to_string(JSON_CONF_FILE).unwrap())
     .expect("config.json is invalid")
