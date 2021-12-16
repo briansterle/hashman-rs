@@ -19,7 +19,7 @@ impl Sys {
     out.split('\n').map(str::to_string).collect()
   }
 
-  pub fn to_pids(ps: Vec<&Process>) -> Vec<Pid> {
+  pub fn pids(ps: Vec<&Process>) -> Vec<Pid> {
     ps.into_iter().map(|p| p.pid()).collect()
   }
 

@@ -42,8 +42,8 @@ impl Rig {
 
     match (gaming_ps.is_empty(), mining_ps.is_empty()) {
       (false, false) => Self::Conflict {
-        gaming: Sys::to_pids(gaming_ps),
-        mining: Sys::to_pids(mining_ps),
+        gaming: Sys::pids(gaming_ps),
+        mining: Sys::pids(mining_ps),
       },
       (false, true) => Self::Gaming.or_idle(&load),
       (true, false) => Self::Mining.on_idle(&load, || Mining::kill_processes(&mut env.sys, vec![])),
