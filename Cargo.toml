@@ -6,9 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-#psutil = "3.2.1"
 sysinfo = "0.21.2"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = { version = "1.0.72" }
-crossbeam = "0.8.1"
 criterion = "0.3.5"

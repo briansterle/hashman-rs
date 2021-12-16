@@ -1,7 +1,7 @@
 use std::process::Command;
-use std::{thread as std_thread, time};
+use std::time::Duration;
+use std::{thread, time};
 
-use crossbeam::thread;
 use sysinfo::{Pid, ProcessExt, Signal};
 
 use crate::rig::Rig;
@@ -9,13 +9,14 @@ use crate::Sys;
 
 pub struct Mining {}
 
+type Exe = str;
+
 impl Mining {
-  pub fn restart_async(mine: Command) -> Result<Rig, ()> {
-    thread::scope(|scope| {
-      scope.spawn(move |_| Mining::restart(mine));
-    })
-    .unwrap();
-    Ok(Rig::Mining)
+  pub fn restart_mining(miner_exe: &Exe) -> Rig {
+    let miner = Command::new(&miner_exe);
+    thread::spawn(move || Mining::restart(miner).expect("miner.exe crashed"));
+    thread::sleep(Duration::from_millis(42));
+    Rig::Mining
   }
 
   fn restart(mut mine: Command) -> Result<Rig, Rig> {
@@ -42,7 +43,7 @@ impl Mining {
           None => break,
           Some(p) => p.kill(Signal::Kill),
         };
-        std_thread::sleep(time::Duration::from_millis(42));
+        thread::sleep(time::Duration::from_millis(42));
       }
     }
   }
