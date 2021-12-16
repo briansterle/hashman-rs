@@ -50,7 +50,7 @@ impl Sys {
     let gp1s = config::json().gpu_p1;
     let gp2s = config::json().gpu_p2;
 
-    for (_pid, p) in self.refresh_and().system.processes() {
+    for p in self.refresh_and().system.processes().values() {
       if gp1s.contains(&p.name().to_owned()) {
         println!("{}", Self::pretty_proc(p, "p1 gaming"));
         p1.push(p);

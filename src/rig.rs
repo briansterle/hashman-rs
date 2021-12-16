@@ -1,5 +1,4 @@
 use core::time;
-use std::process::Command;
 use std::thread;
 
 use sysinfo::Pid;
@@ -19,7 +18,7 @@ pub enum Rig {
 impl Rig {
   fn on_idle<F>(self, gpu: &WindowsGPU, idle_handler: F, wait_for_boot: bool) -> Self
   where
-    F: FnOnce() -> (),
+    F: FnOnce(),
   {
     let max_tries = 90;
     let mut tries = 0;
