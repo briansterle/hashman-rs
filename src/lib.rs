@@ -89,9 +89,8 @@ mod tests {
     let mut sys = Sys {
       system: sysinfo::System::new_all(),
     };
-    let (_ps1, _ps2) = &mut sys.priority_processes();
-    // assert!(!ps1.is_empty());
-    // assert!(!ps2.is_empty()); // must be mining to pass this
+    let (_ps1, ps2) = &mut sys.priority_processes();
+    assert!(!ps2.is_empty());
   }
 
   #[test]

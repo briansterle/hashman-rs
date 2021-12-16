@@ -73,7 +73,6 @@ impl Rig {
   pub fn move_state(current: Rig, env: &mut HashEnv) -> Self {
     match current {
       Self::Idle => Mining::restart_mining(&env.conf.miner_exe),
-      // .expect("failed to restart miner.exe"),
       Self::Mining => current,
       Self::Gaming => current,
       Self::Conflict { gaming: _, mining } => {

@@ -3,9 +3,7 @@ use std::process::Command;
 type GPULoad = f64;
 
 pub trait GPU {
-  // Associated function signature; `Self` refers to the implementor type.
   fn new(py_gputil: &str, py_exec: &str) -> Self;
-
   fn is_hot(&self) -> bool {
     self.get_util().unwrap() > 0.5
   }
