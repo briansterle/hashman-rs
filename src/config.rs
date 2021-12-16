@@ -2,15 +2,17 @@ use std::fs;
 
 use serde::{Deserialize, Serialize};
 
+const JSON_CONF_FILE: &str  = if cfg!(windows) {
+  "config.json"
+} else {
+  "config-linux.json"
+};
+
 #[inline(always)]
 pub fn json() -> Config {
-  let file = if cfg!(windows) {
-    "config.json"
-  } else {
-    "config-linux.json"
-  };
-  let json_str = fs::read_to_string(file).unwrap();
-  serde_json::from_str(&json_str).expect("config.json is invalid")
+  serde_json::from_str(
+    &fs::read_to_string(JSON_CONF_FILE).unwrap()
+  ).expect("config.json is invalid")
 }
 
 #[derive(Debug, Serialize, Deserialize)]
