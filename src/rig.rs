@@ -41,13 +41,18 @@ impl Rig {
     let (gaming_ps, mining_ps) = env.sys.priority_processes();
 
     match (gaming_ps.is_empty(), mining_ps.is_empty()) {
+      (true, true) => Self::Idle,
+      (true, false) => Self::Mining.on_idle(&load, || Mining::kill_processes(&mut env.sys, vec![])),
       (false, false) => Self::Conflict {
         gaming: Sys::pids(gaming_ps),
         mining: Sys::pids(mining_ps),
       },
-      (false, true) => Self::Gaming.or_idle(&load),
-      (true, false) => Self::Mining.on_idle(&load, || Mining::kill_processes(&mut env.sys, vec![])),
-      (true, true) => Self::Idle,
+      (false, true) => Self::Gaming.on_idle(&load, || {
+        println!(
+          "{:?}",
+          gaming_ps.into_iter().map(|p| Sys::pretty_proc(p, "gaming"))
+        )
+      }),
     }
   }
 
