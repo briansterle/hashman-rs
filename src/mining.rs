@@ -12,14 +12,14 @@ pub struct Mining {}
 type Exe = str;
 
 impl Mining {
-  pub fn restart_mining(miner_exe: &Exe) -> Rig {
+  pub fn restart(miner_exe: &Exe) -> Rig {
     let miner = Command::new(&miner_exe);
-    thread::spawn(move || Mining::restart(miner).expect("miner.exe crashed"));
+    thread::spawn(move || Mining::run_restart_cmd(miner).expect("miner.exe crashed"));
     thread::sleep(Duration::from_millis(42));
     Rig::Mining
   }
 
-  fn restart(mut mine: Command) -> Result<Rig, Rig> {
+  fn run_restart_cmd(mut mine: Command) -> Result<Rig, Rig> {
     let output = mine.output().expect("failed to start mining process");
     match output.status.code() {
       Some(code) if code == 0 => Ok(Rig::Mining),
@@ -31,7 +31,7 @@ impl Mining {
     }
   }
 
-  pub fn kill_processes(sys: &mut Sys, pids: Vec<Pid>) {
+  pub fn kill(sys: &mut Sys, pids: Vec<Pid>) {
     let kill_pids = if pids.is_empty() {
       Sys::pids(sys.priority_processes().1)
     } else {

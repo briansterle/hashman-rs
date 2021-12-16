@@ -48,11 +48,7 @@ impl Rig {
 
     match (gaming_ps.is_empty(), mining_ps.is_empty()) {
       (true, true) => Self::Idle,
-      (true, false) => Self::Mining.on_idle(
-        &env.gpu,
-        || Mining::kill_processes(&mut env.sys, vec![]),
-        true,
-      ),
+      (true, false) => Self::Mining.on_idle(&env.gpu, || Mining::kill(&mut env.sys, vec![]), true),
       (false, false) => Self::Conflict {
         gaming: Sys::pids(gaming_ps),
         mining: Sys::pids(mining_ps),
@@ -72,15 +68,15 @@ impl Rig {
 
   pub fn move_state(current: Rig, env: &mut HashEnv) -> Self {
     match current {
-      Self::Idle => Mining::restart_mining(&env.conf.miner_exe),
+      Self::Idle => Mining::restart(&env.conf.miner_exe),
       Self::Mining => current,
       Self::Gaming => current,
       Self::Conflict { gaming: _, mining } => {
-        Mining::kill_processes(&mut env.sys, mining);
+        Mining::kill(&mut env.sys, mining);
         let mut mining_pids = env.sys.mining_pids();
         while !mining_pids.is_empty() {
           println!("mining_pids still live: {:?}", mining_pids);
-          Mining::kill_processes(&mut env.sys, mining_pids.to_owned());
+          Mining::kill(&mut env.sys, mining_pids.to_owned());
           mining_pids = env.sys.mining_pids();
         }
 
