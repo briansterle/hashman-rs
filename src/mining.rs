@@ -30,7 +30,6 @@ impl Mining {
     }
   }
 
-
   pub fn kill_processes(sys: &mut Sys, pids: Vec<Pid>) -> () {
     let kill_pids = if pids.is_empty() {
       Sys::pids(sys.priority_processes().1)

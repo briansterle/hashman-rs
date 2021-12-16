@@ -1,22 +1,16 @@
 use std::process::Command;
 
-#[derive(Debug, PartialOrd, PartialEq)]
-pub struct GPULoad {
-  pub load: f32,
-}
-
-impl GPULoad {
-  pub fn is_hot(&self) -> bool {
-    self.load > 0.5
-  }
-}
+type GPULoad = f64;
 
 pub trait GPU {
   // Associated function signature; `Self` refers to the implementor type.
   fn new(py_gputil: &str, py_exec: &str) -> Self;
 
+  fn is_hot(&self) -> bool {
+    self.get_util().unwrap() > 0.5
+  }
   fn get_util(&self) -> Result<GPULoad, String>;
-  fn parse_usage(stdout: Vec<u8>) -> f32 {
+  fn parse_usage(stdout: Vec<u8>) -> f64 {
     return String::from_utf8_lossy(&stdout).trim().parse().unwrap();
   }
 }
@@ -43,9 +37,7 @@ impl GPU for WindowsGPU {
 
     match output.status.code() {
       Some(code) if code == 0 => {
-        let load = GPULoad {
-          load: WindowsGPU::parse_usage(output.stdout),
-        };
+        let load = WindowsGPU::parse_usage(output.stdout);
         println!("gpu_load: {:?}", load);
         Ok(load)
       }

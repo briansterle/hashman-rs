@@ -62,6 +62,7 @@ mod tests {
   fn rig_gets_state() {
     let mut env = HashEnv::setup();
     let _state = Rig::state(&mut env);
+    assert_eq!(_state, Rig::Mining);
   }
 
   #[test]
@@ -91,5 +92,11 @@ mod tests {
     let (_ps1, _ps2) = &mut sys.priority_processes();
     // assert!(!ps1.is_empty());
     // assert!(!ps2.is_empty()); // must be mining to pass this
+  }
+
+  #[test]
+  fn run_debug() {
+    let updated: Rig = HashEnv::setup().run();
+    assert_eq!(updated, Rig::Mining)
   }
 }

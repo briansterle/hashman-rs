@@ -36,10 +36,18 @@ impl Sys {
       .collect()
   }
 
+  pub fn mining_pids(&mut self) -> Vec<Pid> {
+    Self::pids(self.priority_processes().1)
+  }
+
+  pub fn gaming_pids(&mut self) -> Vec<Pid> {
+    Self::pids(self.priority_processes().0)
+  }
+
   pub fn priority_processes(&mut self) -> (Vec<&Process>, Vec<&Process>) {
     let mut p1 = vec![];
     let mut p2 = vec![];
-    self.system.refresh_all();
+    self.system.refresh_processes();
 
     let gp1s = config::json().gpu_p1;
     let gp2s = config::json().gpu_p2;
