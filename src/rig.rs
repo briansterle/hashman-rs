@@ -1,6 +1,8 @@
+use core::time;
 use std::process::Command;
+use std::thread;
 
-use sysinfo::{Pid, ProcessExt};
+use sysinfo::{Pid};
 
 use crate::gpu::{GPULoad, GPU};
 use crate::mining::Mining;
@@ -15,24 +17,31 @@ pub enum Rig {
 }
 
 impl Rig {
-  fn or_idle(self, load: &GPULoad) -> Self {
-    if load.is_hot() {
-      self
-    } else {
-      Self::Idle
-    }
-  }
-
-  fn on_idle<F>(self, load: &GPULoad, on_idle: F) -> Self
+  fn on_idle<F>(self, load: &GPULoad, idle_handler: F, wait_for_boot: bool) -> Self
   where
     F: FnOnce() -> (),
   {
-    if load.is_hot() {
-      self
-    } else {
-      on_idle();
-      Self::Idle
+    let max_tries = 90;
+    let mut tries = 0;
+    let mut return_state = Self::Idle;
+
+    if wait_for_boot {
+      while tries < max_tries {
+        if load.is_hot() {
+          return_state = self;
+          break;
+        } else {
+          println!("Sleeping until gpu_load.is_hot...");
+          thread::sleep(time::Duration::from_millis(1000));
+        }
+        tries += 1;
+      }
     }
+
+    if return_state == Self::Idle {
+      idle_handler();
+    }
+    return_state
   }
 
   pub fn state(env: &mut HashEnv) -> Self {
@@ -42,17 +51,23 @@ impl Rig {
 
     match (gaming_ps.is_empty(), mining_ps.is_empty()) {
       (true, true) => Self::Idle,
-      (true, false) => Self::Mining.on_idle(&load, || Mining::kill_processes(&mut env.sys, vec![])),
+      (true, false) => {
+        Self::Mining.on_idle(&load, || Mining::kill_processes(&mut env.sys, vec![]), true)
+      }
       (false, false) => Self::Conflict {
         gaming: Sys::pids(gaming_ps),
         mining: Sys::pids(mining_ps),
       },
-      (false, true) => Self::Gaming.on_idle(&load, || {
-        println!(
-          "{:?}",
-          gaming_ps.into_iter().map(|p| Sys::pretty_proc(p, "gaming"))
-        )
-      }),
+      (false, true) => Self::Gaming.on_idle(
+        &load,
+        || {
+          println!(
+            "{:?}",
+            gaming_ps.into_iter().map(|p| Sys::pretty_proc(p, "gaming"))
+          )
+        },
+        false,
+      ),
     }
   }
 

@@ -1,4 +1,3 @@
-use std::collections::HashSet;
 use std::process::Command;
 use std::{thread as std_thread, time};
 
@@ -9,11 +8,6 @@ use crate::rig::Rig;
 use crate::Sys;
 
 pub struct Mining {}
-
-// todo get from &Config
-fn get_hash_bins() -> HashSet<&'static str> {
-  HashSet::from(["app_nhm", "nicehash", "nice"])
-}
 
 impl Mining {
   pub fn restart_async(mine: Command) -> Result<Rig, ()> {
@@ -36,11 +30,6 @@ impl Mining {
     }
   }
 
-  // pub fn kill_all(sys: &mut Sys, gpu_p2: &Vec<String>) -> bool {
-  //   println!("Killing all mining processes...");
-  //   let (_, ps2) = sys.priority_processes(&vec![], gpu_p2);
-  //   Self::kill_processes(ps2)
-  // }
 
   pub fn kill_processes(sys: &mut Sys, pids: Vec<Pid>) -> () {
     let kill_pids = if pids.is_empty() {
