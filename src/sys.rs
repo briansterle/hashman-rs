@@ -23,10 +23,9 @@ impl Sys {
     ps.into_iter().map(|p| p.pid()).collect()
   }
 
-  #[inline(always)]
+  #[inline]
   pub fn processes(&mut self) -> Values<Pid, Process> {
-    self.system.refresh_all();
-    self.system.processes().values()
+    self.refresh_and().system.processes().values()
   }
 
   pub fn processes_matching(&mut self, needle: &str) -> Vec<&Process> {
@@ -47,12 +46,11 @@ impl Sys {
   pub fn priority_processes(&mut self) -> (Vec<&Process>, Vec<&Process>) {
     let mut p1 = vec![];
     let mut p2 = vec![];
-    self.system.refresh_processes();
 
     let gp1s = config::json().gpu_p1;
     let gp2s = config::json().gpu_p2;
 
-    for (_pid, p) in self.system.processes() {
+    for (_pid, p) in self.refresh_and().system.processes() {
       if gp1s.contains(&p.name().to_owned()) {
         println!("{}", Self::pretty_proc(p, "p1 gaming"));
         p1.push(p);
@@ -64,12 +62,18 @@ impl Sys {
     (p1, p2)
   }
 
-  pub fn lookup(&mut self, pid: Pid) -> Option<&Process> {
-    self.system.refresh_all();
-    self.system.process(pid)
+  #[inline]
+  pub fn refresh_and(&mut self) -> &mut Self {
+    self.system.refresh_processes();
+    self
   }
 
-  #[inline(always)]
+  #[inline]
+  pub fn lookup(&mut self, pid: Pid) -> Option<&Process> {
+    self.refresh_and().system.process(pid)
+  }
+
+  #[inline]
   pub fn pretty_proc(p: &Process, p_type: &str) -> String {
     format!(
       "Found {} process [ \n\tname: {:#?} \n\tpid: {:?} \n\tparent: {:?} \n\tcmd: {:?} \n\tcpu_usage: {:#?} \n\tstatus: {:#?}\n]",

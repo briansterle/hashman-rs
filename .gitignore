@@ -2,3 +2,4 @@
 Cargo.lock
 *.xml
 *.iml
+.idea
