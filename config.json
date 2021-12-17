@@ -3,7 +3,8 @@
   "py_exec": "python",
   "py_gputil": "src\\python\\get_gpu_util.py",
   "gpu_p1": [
-    "Notepad.exe"
+    "Notepad.exe",
+    "D:\\GAMES\\steamapps\\common"
   ],
   "gpu_p2": [
     "NiceHashMiner.exe",
