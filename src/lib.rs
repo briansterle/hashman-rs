@@ -54,7 +54,7 @@ mod tests {
   fn config_parses() {
     let config: Config = config::json();
     assert!(config.miner_exe.ends_with("NiceHashMiner.exe"));
-    assert_eq!(config.gpu_p1, vec!["Notepad.exe"]);
+    assert!(config.gpu_p1.contains(&"Notepad.exe".to_string()));
     assert!(config.gpu_p2.contains(&"NiceHashMiner.exe".to_string()));
   }
 

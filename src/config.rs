@@ -3,7 +3,7 @@ use std::fs;
 use serde::{Deserialize, Serialize};
 
 const JSON_CONF_FILE: &str = if cfg!(windows) {
-  "config.json"
+  "C:\\Users\\brian\\CLionProjects\\hashman-rs\\config.json"
 } else {
   "config-linux.json"
 };
