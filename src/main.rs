@@ -4,7 +4,7 @@ use std::time::Duration;
 use hashman_rs::{HashEnv, Rig};
 
 fn main() {
-  let loops: u64 = match env::args().collect().get(1) {
+  let loops: u64 = match env::args().collect::<Vec<String>>().get(1) {
     None => 1,
     Some(count) => count.parse::<u64>().unwrap(),
   };
