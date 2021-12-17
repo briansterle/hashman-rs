@@ -44,21 +44,24 @@ impl Rig {
   }
 
   pub fn state(env: &mut HashEnv) -> Self {
-    let (gaming_ps, mining_ps) = env.sys.priority_processes();
+    let pids = env.sys.fetch_pids();
 
-    match (gaming_ps.is_empty(), mining_ps.is_empty()) {
+    match (pids.gaming.is_empty(), pids.mining.is_empty()) {
       (true, true) => Self::Idle,
       (true, false) => Self::Mining.on_idle(&env.gpu, || Mining::kill(&mut env.sys, vec![]), true),
       (false, false) => Self::Conflict {
-        gaming: Sys::pids(gaming_ps),
-        mining: Sys::pids(mining_ps),
+        gaming: pids.gaming,
+        mining: pids.mining,
       },
       (false, true) => Self::Gaming.on_idle(
         &env.gpu,
         || {
           println!(
             "{:?}",
-            gaming_ps.into_iter().map(|p| Sys::pretty_proc(p, "gaming"))
+            pids
+              .gaming
+              .into_iter()
+              .map(|p| Sys::pretty_proc(env.sys.lookup(p).unwrap(), "gaming"))
           )
         },
         false,
@@ -73,11 +76,11 @@ impl Rig {
       Self::Gaming => current,
       Self::Conflict { gaming: _, mining } => {
         Mining::kill(&mut env.sys, mining);
-        let mut mining_pids = env.sys.mining_pids();
+        let mut mining_pids = env.sys.fetch_pids().mining;
         while !mining_pids.is_empty() {
           println!("mining_pids still live: {:?}", mining_pids);
           Mining::kill(&mut env.sys, mining_pids.to_owned());
-          mining_pids = env.sys.mining_pids();
+          mining_pids = env.sys.fetch_pids().mining;
         }
 
         Self::Gaming

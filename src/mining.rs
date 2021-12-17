@@ -33,7 +33,7 @@ impl Mining {
 
   pub fn kill(sys: &mut Sys, pids: Vec<Pid>) {
     let kill_pids = if pids.is_empty() {
-      Sys::pids(sys.priority_processes().1)
+      sys.fetch_pids().mining
     } else {
       pids
     };

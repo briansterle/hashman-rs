@@ -76,15 +76,6 @@ mod tests {
   }
 
   #[test]
-  fn sys_gets_tasks() {
-    let tasks = Sys::tasks();
-    assert!(!&tasks.is_empty());
-
-    let tasks_ref = &mut tasks.into_iter();
-    assert!(tasks_ref.any(|s| s.contains("cargo")));
-  }
-
-  #[test]
   fn gets_priority_processes() {
     let mut sys = Sys {
       system: sysinfo::System::new_all(),
