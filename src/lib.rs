@@ -66,31 +66,12 @@ mod tests {
   }
 
   #[test]
-  fn sys_gets_cargo_process() {
-    let mut sys = Sys {
-      system: sysinfo::System::new_all(),
-    };
-
-    let ps = sys.processes_matching("cargo");
-    assert!(!ps.is_empty());
-  }
-
-  #[test]
-  fn sys_gets_tasks() {
-    let tasks = Sys::tasks();
-    assert!(!&tasks.is_empty());
-
-    let tasks_ref = &mut tasks.into_iter();
-    assert!(tasks_ref.any(|s| s.contains("cargo")));
-  }
-
-  #[test]
   fn gets_priority_processes() {
     let mut sys = Sys {
       system: sysinfo::System::new_all(),
     };
-    let (_ps1, ps2) = &mut sys.priority_processes();
-    assert!(!ps2.is_empty());
+    let pids = &mut sys.fetch_pids();
+    assert!(!pids.mining.is_empty());
   }
 
   #[test]

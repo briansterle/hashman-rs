@@ -1,5 +1,4 @@
 use std::collections::hash_map::Values;
-use std::process::Command;
 use std::str;
 
 use sysinfo::{Pid, Process, ProcessExt, SystemExt};
@@ -11,63 +10,56 @@ pub struct Sys {
   pub system: sysinfo::System,
 }
 
+pub struct Pids {
+  pub gaming: Vec<Pid>,
+  pub mining: Vec<Pid>,
+}
+
 impl Sys {
-  pub fn tasks() -> Vec<String> {
-    let output = Command::new("tasklist.exe").output().unwrap();
-    let stdout = output.stdout;
-    let out = str::from_utf8(&stdout).unwrap();
-    out.split('\n').map(str::to_string).collect()
-  }
-
-  pub fn pids(ps: Vec<&Process>) -> Vec<Pid> {
-    ps.into_iter().map(|p| p.pid()).collect()
-  }
-
-  pub fn processes(&mut self) -> Values<Pid, Process> {
-    self.refresh_and().system.processes().values()
-  }
-
-  pub fn processes_matching(&mut self, needle: &str) -> Vec<&Process> {
-    self
-      .processes()
-      .filter(|p| p.name().to_lowercase().contains(needle))
-      .collect()
-  }
-
-  pub fn mining_pids(&mut self) -> Vec<Pid> {
-    Self::pids(self.priority_processes().1)
-  }
-
-  pub fn gaming_pids(&mut self) -> Vec<Pid> {
-    Self::pids(self.priority_processes().0)
-  }
-
-  pub fn priority_processes(&mut self) -> (Vec<&Process>, Vec<&Process>) {
-    let mut p1 = vec![];
-    let mut p2 = vec![];
-
-    let gp1s = config::json().gpu_p1;
-    let gp2s = config::json().gpu_p2;
-
-    for p in self.refresh_and().system.processes().values() {
-      if gp1s.contains(&p.name().to_owned()) {
-        println!("{}", Self::pretty_proc(p, "p1 gaming"));
-        p1.push(p);
-      } else if gp2s.contains(&p.name().to_owned()) {
-        println!("{}", Self::pretty_proc(p, "p2 mining"));
-        p2.push(p);
-      }
-    }
-    (p1, p2)
-  }
-
-  pub fn refresh_and(&mut self) -> &mut Self {
+  fn refresh(&mut self) -> &mut Self {
     self.system.refresh_processes();
     self
   }
 
+  pub fn fetch_pids(&mut self) -> Pids {
+    let gpu_p1 = config::json().gpu_p1;
+    let gpu_p2 = config::json().gpu_p2;
+
+    let mut p1: Vec<Pid> = vec![];
+    let mut p2: Vec<Pid> = vec![];
+
+    // initial search for gaming and mining parent processes
+    for (pid, p) in self.refresh().system.processes() {
+      if gpu_p1.contains(&p.name().to_owned()) {
+        println!("{}", Self::pretty_proc(p, "Gaming Process"));
+        p1.push(pid.to_owned());
+      } else if gpu_p2.contains(&p.name().to_owned()) {
+        println!("{}", Self::pretty_proc(p, "Mining Process"));
+        p2.push(pid.to_owned());
+      }
+    }
+
+    // second search for the children of these parents
+    for (pid, p) in self.refresh().system.processes() {
+      if let Some(parent) = p.parent() {
+        if p1.contains(&parent) {
+          println!("Found a p1 child: {}", pid);
+          p1.push(pid.to_owned());
+        } else if p2.contains(&parent) {
+          println!("Found a p2 child: {}", pid);
+          p2.push(pid.to_owned());
+        }
+      }
+    }
+
+    Pids {
+      gaming: p1,
+      mining: p2,
+    }
+  }
+
   pub fn lookup(&mut self, pid: Pid) -> Option<&Process> {
-    self.refresh_and().system.process(pid)
+    self.refresh().system.process(pid)
   }
 
   pub fn pretty_proc(p: &Process, p_type: &str) -> String {
