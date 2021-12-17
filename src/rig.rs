@@ -48,24 +48,12 @@ impl Rig {
 
     match (pids.gaming.is_empty(), pids.mining.is_empty()) {
       (true, true) => Self::Idle,
+      (false, true) => Self::Gaming,
       (true, false) => Self::Mining.on_idle(&env.gpu, || Mining::kill(&mut env.sys, vec![]), true),
       (false, false) => Self::Conflict {
         gaming: pids.gaming,
         mining: pids.mining,
       },
-      (false, true) => Self::Gaming.on_idle(
-        &env.gpu,
-        || {
-          println!(
-            "{:?}",
-            pids
-              .gaming
-              .into_iter()
-              .map(|p| Sys::pretty_proc(env.sys.lookup(p).unwrap(), "gaming"))
-          )
-        },
-        false,
-      ),
     }
   }
 
