@@ -20,7 +20,7 @@ pub struct WindowsGPU {
 }
 
 impl GPU for WindowsGPU {
-  fn new(py_gputil: &str, py_exec: &str) -> WindowsGPU {
+  fn new(py_exec: &str, py_gputil: &str) -> WindowsGPU {
     WindowsGPU {
       py_exec: py_exec.to_string(),
       py_gputil: py_gputil.to_string(),
@@ -28,11 +28,12 @@ impl GPU for WindowsGPU {
   }
 
   fn get_util(&self) -> Result<GPULoad, String> {
+    println!("{:?}", self);
     let output = Command::new(&self.py_exec)
-      .args([&self.py_gputil])
+      .args(["-c", &self.py_gputil])
       .output()
       .expect("failed to execute process");
-
+    println!("{:?}", output);
     match output.status.code() {
       Some(code) if code == 0 => {
         let load = WindowsGPU::parse_usage(output.stdout);

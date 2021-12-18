@@ -27,22 +27,35 @@ fn gaming_path() -> String {
 
 #[derive(Debug)]
 pub struct HashEnv {
-  conf: Config,
+  conf: HashPath,
   sys: Sys,
   gpu: WindowsGPU,
 }
 
-const GPUTIL_PY: &'static str = r#"import GPUtil`ntry:`n`tprint(GPUtil.getGPUs().pop().load)`nexcept IndexError:`n`tprint(0.0)`n"#;
+const GPUTIL_PY: &'static str = "import GPUtil; print(GPUtil.getGPUs().pop().load)";
 const PYTHON: &'static str = "python";
-const HASH_CONF: &'static str = "~/.hashman";
+// const HASH_CONF: &'static str = "~/.hashman";
 
-pub fn hash_path() -> String {
-  format!("{:?}/hashpath.txt", HASH_CONF)
+fn hash_conf_dir() -> String {
+  let home = dirs::home_dir()
+    .expect("no $HOME dir found!")
+    .to_str()
+    .unwrap()
+    .to_string();
+  format!("{}\\.hashman", home)
 }
 
+type Exe = str;
+
+pub fn hash_path() -> String {
+  format!("{}\\hashpath.txt", hash_conf_dir())
+}
+
+#[derive(Debug)]
 struct HashPath {
   mining_path: Vec<String>,
   gaming_path: Vec<String>,
+  miner_exe: String,
 }
 
 impl HashPath {
@@ -64,6 +77,12 @@ impl HashPath {
     return Ok(HashPath {
       mining_path: splitty.get("mining_path").unwrap().to_vec(),
       gaming_path: splitty.get("gaming_path").unwrap().to_vec(),
+      miner_exe: splitty
+        .get("miner_exe")
+        .unwrap()
+        .first()
+        .unwrap()
+        .to_string(),
     });
   }
 
@@ -71,26 +90,31 @@ impl HashPath {
     // if ~/.hashman does not exist create it
     // if  ~/.hashman/hashpath.txt does not exist create/load defaults
     // then parse dirs
-    if std::path::Path::new(HASH_CONF).is_dir() {
-      if std::path::Path::new(&hash_path()).is_file() {
+    if std::path::Path::new(&hash_conf_dir()).is_dir() {
+      let hp = &hash_path();
+      println!("checking hash path @ {}", hp);
+      if std::path::Path::new(hp).is_file() {
         // parse dat
         let data = &std::fs::read_to_string(hash_path()).unwrap();
         return HashPath::parse(data);
       } else {
+        println!("HASH_PATH not a file")
       }
     } else {
+      println!("HASH_CONF not a dir")
     }
-    Ok(HashPath {
-      mining_path: vec![],
-      gaming_path: vec![],
-    })
+    panic!("couldn't load the HashPath");
+    // Ok(HashPath {
+    //   mining_path: vec![],
+    //   gaming_path: vec![],
+    // })
   }
 }
 
 impl HashEnv {
   pub fn setup() -> Self {
     let env = HashEnv {
-      conf: config::json(),
+      conf: HashPath::fetch().expect("couldn't parse the HASH_PATH"),
       sys: Sys {
         system: System::new_all(),
       },
@@ -117,10 +141,18 @@ mod tests {
   use crate::{config, HashEnv, HashPath};
 
   #[test]
+  fn hashpath_fetch() {
+    let res = HashPath::fetch();
+    assert!(res.is_ok());
+    let hp = res.unwrap();
+  }
+
+  #[test]
   fn hashpath_parse() {
     let contents = r#"
 gaming_path=Notepad.exe,D:\GAMES\steamapps\common
 mining_path=NiceHashMiner.exe,app_nhm.exe
+miner_exe=C:\Users\brian\AppData\Local\Programs\NiceHash Miner\NiceHashMiner.exe
 "#;
     let res = HashPath::parse(contents);
     assert!(res.is_ok());
@@ -130,6 +162,10 @@ mining_path=NiceHashMiner.exe,app_nhm.exe
       hp.gaming_path,
       vec!["Notepad.exe", "D:\\GAMES\\steamapps\\common"]
     );
+    assert_eq!(
+      hp.miner_exe,
+      "C:\\Users\\brian\\AppData\\Local\\Programs\\NiceHash Miner\\NiceHashMiner.exe"
+    )
   }
 
   #[test]

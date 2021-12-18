@@ -5,11 +5,9 @@ use std::{thread, time};
 use sysinfo::{Pid, ProcessExt, Signal};
 
 use crate::rig::Rig;
-use crate::Sys;
+use crate::{Exe, Sys};
 
 pub struct Mining {}
-
-type Exe = str;
 
 impl Mining {
   pub fn restart(miner_exe: &Exe) -> Rig {
