@@ -2,7 +2,6 @@
 
 use std::collections::HashMap;
 use std::env;
-use std::ptr::null;
 
 use sysinfo::{System, SystemExt};
 
@@ -49,22 +48,21 @@ struct HashPath {
 impl HashPath {
   fn parse(str: &str) -> Result<Self, ()> {
     let lines = str.split("\n");
-    let splitty: HashMap<&str, Vec<&str>> = HashMap::from_iter(
+    let splitty: HashMap<&str, Vec<String>> = HashMap::from_iter(
       lines
         .map(|line| {
           let kv: Vec<&str> = line.split("=").collect();
           return (kv[0], kv[1]);
         })
         .map(|(name, path)| {
-          let paths: Vec<&str> = path.split(",").collect();
+          let paths: Vec<String> = path.split(",").map(|s| s.to_string()).collect();
           return (name, paths);
         }),
     );
 
-    println!("{:#?}", splitty);
     return Ok(HashPath {
-      mining_path: vec![],
-      gaming_path: vec![],
+      mining_path: splitty.get("mining_path").unwrap().to_vec(),
+      gaming_path: splitty.get("gaming_path").unwrap().to_vec(),
     });
   }
 
