@@ -6,3 +6,12 @@ edition = "2021"
 [dependencies]
 sysinfo = "0.21.2"
 dirs = "4.0.0"
+
+
+[dev-dependencies]
+criterion = "0.3"
+
+
+[[bench]]
+name = "benchmark"
+harness = false

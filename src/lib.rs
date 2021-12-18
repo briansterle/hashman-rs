@@ -20,9 +20,9 @@ type GPULoad = f64;
 
 #[derive(Debug)]
 pub struct HashEnv {
-  hash_path: HashPath,
-  sys: Sys,
-  gpu: WindowsGPU,
+  pub hash_path: HashPath,
+  pub sys: Sys,
+  pub gpu: WindowsGPU,
 }
 
 const GPUTIL_PY: &str = "import GPUtil; print(GPUtil.getGPUs().pop().load)";
