@@ -1,18 +1,17 @@
-use std::env;
 use std::time::Duration;
 
 use hashman_rs::{HashEnv, Rig};
 
 fn main() {
-  let args = env::args().collect::<Vec<String>>();
+  let args = std::env::args().collect::<Vec<String>>();
   let loops: u64 = match args.get(1) {
     None => 1,
-    Some(count) => count.parse::<u64>().unwrap(),
+    Some(count) => count.parse().unwrap(),
   };
 
-  let refresh_interval = match args.get(2) {
+  let refresh_interval: u64 = match args.get(2) {
     None => 1,
-    Some(count) => count.parse::<u64>().unwrap(),
+    Some(count) => count.parse().unwrap(),
   };
 
   let mut i = 0;
