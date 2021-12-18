@@ -2,10 +2,10 @@ use std::process::Command;
 use std::time::Duration;
 use std::{thread, time};
 
-use sysinfo::{Pid, ProcessExt, Signal};
+use sysinfo::{ProcessExt, Signal};
 
 use crate::rig::Rig;
-use crate::{Exe, HashPath, Sys};
+use crate::{Exe, HashEnv};
 
 pub struct Mining {}
 
@@ -29,15 +29,11 @@ impl Mining {
     }
   }
 
-  pub fn kill(sys: &mut Sys, pids: Vec<Pid>, hp: &HashPath) {
-    let kill_pids = if pids.is_empty() {
-      sys.fetch_pids(hp).mining
-    } else {
-      pids
-    };
+  pub fn kill(env: &mut HashEnv) {
+    let kill_pids = env.sys.fetch_pids(&env.hash_path).mining;
     for pid in kill_pids {
       loop {
-        match sys.lookup(pid) {
+        match env.sys.lookup(pid) {
           None => break,
           Some(p) => p.kill(Signal::Kill),
         };
