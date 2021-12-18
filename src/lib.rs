@@ -50,6 +50,7 @@ impl HashPath {
     let lines = str.split("\n");
     let splitty: HashMap<&str, Vec<String>> = HashMap::from_iter(
       lines
+        .filter(|line| !line.is_empty())
         .map(|line| {
           let kv: Vec<&str> = line.split("=").collect();
           return (kv[0], kv[1]);
@@ -113,7 +114,23 @@ mod tests {
   use crate::config::Config;
   use crate::rig::Rig;
   use crate::sys::Sys;
-  use crate::{config, HashEnv};
+  use crate::{config, HashEnv, HashPath};
+
+  #[test]
+  fn hashpath_parse() {
+    let contents = r#"
+gaming_path=Notepad.exe,D:\GAMES\steamapps\common
+mining_path=NiceHashMiner.exe,app_nhm.exe
+"#;
+    let res = HashPath::parse(contents);
+    assert!(res.is_ok());
+    let hp = res.unwrap();
+    assert_eq!(hp.mining_path, vec!["NiceHashMiner.exe", "app_nhm.exe"]);
+    assert_eq!(
+      hp.gaming_path,
+      vec!["Notepad.exe", "D:\\GAMES\\steamapps\\common"]
+    );
+  }
 
   #[test]
   fn config_parses() {
