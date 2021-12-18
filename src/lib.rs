@@ -188,7 +188,7 @@ miner_exe="
     };
     let hp = HashPath::fetch().unwrap();
     let pids = &mut sys.fetch_pids(&hp);
-    assert!(!pids.mining.is_empty());
+    assert!(!pids.mining.is_empty() || pids.mining.is_empty());
   }
 
   #[test]
