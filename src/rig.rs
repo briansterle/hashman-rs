@@ -14,7 +14,7 @@ pub enum Rig {
 }
 
 impl Rig {
-  fn on_idle(self, env: &mut HashEnv) -> Self {
+  fn wait_if_idle(self, env: &mut HashEnv) -> Self {
     let max_tries = 90;
     let mut tries = 0;
     let mut return_state = Self::Idle;
@@ -42,7 +42,7 @@ impl Rig {
     match (pids.gaming.is_empty(), pids.mining.is_empty()) {
       (true, true) => Self::Idle,
       (false, true) => Self::Gaming,
-      (true, false) => Self::Mining.on_idle(env),
+      (true, false) => Self::Mining.wait_if_idle(env),
       (false, false) => Self::Conflict,
     }
   }
