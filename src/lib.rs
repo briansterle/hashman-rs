@@ -41,8 +41,8 @@ fn hash_conf_dir() -> String {
   format!("{}\\.hashman", home)
 }
 
-pub fn hash_path() -> String {
-  format!("{}\\hashpath.txt", hash_conf_dir())
+fn hash_path() -> String {
+  format!("{}\\hashpath.toml", hash_conf_dir())
 }
 
 #[derive(Debug)]

@@ -1,3 +1,5 @@
+![example workflow](https://github.com/briansterle/hashman-rs/actions/workflows/rust.yml/badge.svg)
+
 # Hashman
 
 ## What is Hashman
