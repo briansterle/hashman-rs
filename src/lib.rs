@@ -1,6 +1,7 @@
 #![allow(dead_code)]
 
 use sysinfo::{System, SystemExt};
+use std::env;
 
 use gpu::{WindowsGPU, GPU};
 
@@ -13,6 +14,15 @@ mod gpu;
 mod mining;
 mod rig;
 mod sys;
+
+
+fn miner_path() -> String {
+  env::var("HASHMAN_MINER_PATH").expect("please set HASHMAN_MINER_PATH env var")  
+}
+
+fn gaming_path() -> String {
+  env::var("HASHMAN_GAMING_PATH").expect("please set HASHMAN_GAMING_PATH env var")
+}
 
 #[derive(Debug)]
 pub struct HashEnv {
