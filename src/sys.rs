@@ -1,4 +1,3 @@
-use std::collections::hash_map::Values;
 use std::str;
 
 use sysinfo::{Pid, Process, ProcessExt, SystemExt};

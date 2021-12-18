@@ -5,7 +5,7 @@ use sysinfo::Pid;
 
 use crate::gpu::GPU;
 use crate::mining::Mining;
-use crate::{HashEnv, Sys, WindowsGPU};
+use crate::{HashEnv, WindowsGPU};
 
 #[derive(Debug, PartialEq)]
 pub enum Rig {
