@@ -27,18 +27,29 @@ pub struct HashEnv {
 
 const GPUTIL_PY: &str = "import GPUtil; print(GPUtil.getGPUs().pop().load)";
 const PYTHON: &str = "python";
-const DEFAULT_CONFIGURATION: &[u8] = b"gaming_path=Notepad.exe,D:\\GAMES\\steamapps\\common
-mining_path=NiceHashMiner.exe,app_nhm.exe
-miner_exe=C:\\Users\\brian\\AppData\\Local\\Programs\\NiceHash Miner\\NiceHashMiner.exe
-";
 
-fn hash_conf_dir() -> String {
-  let home = dirs::home_dir()
+fn default_conf() -> String {
+  "gaming_path=Notepad.exe,D:\\GAMES\\steamapps\\common
+mining_path=NiceHashMiner.exe,app_nhm.exe
+miner_exe="
+    .to_owned()
+    + &default_nice_hash_location()
+}
+
+fn default_nice_hash_location() -> String {
+  home() + "\\AppData\\Local\\Programs\\NiceHash Miner\\NiceHashMiner.exe"
+}
+
+fn home() -> String {
+  dirs::home_dir()
     .expect("no $HOME dir found!")
     .to_str()
     .unwrap()
-    .to_string();
-  format!("{}\\.hashman", home)
+    .to_string()
+}
+
+fn hash_conf_dir() -> String {
+  format!("{}\\.hashman", home())
 }
 
 fn hash_path() -> String {
@@ -91,7 +102,7 @@ impl HashPath {
       } else {
         println!("HASH_PATH not a file");
         let mut file = std::fs::File::create(hash_path())?;
-        file.write_all(DEFAULT_CONFIGURATION)?;
+        file.write_all(default_conf().as_bytes())?;
         let data = &std::fs::read_to_string(hash_path())?;
         HashPath::parse(data)
       }
@@ -129,7 +140,7 @@ mod tests {
 
   use crate::rig::Rig;
   use crate::sys::Sys;
-  use crate::{HashEnv, HashPath};
+  use crate::{default_nice_hash_location, HashEnv, HashPath};
 
   #[test]
   fn hashpath_fetch() {
@@ -141,20 +152,18 @@ mod tests {
       hp.gaming_path,
       vec!["Notepad.exe", "D:\\GAMES\\steamapps\\common"]
     );
-    assert_eq!(
-      hp.miner_exe,
-      "C:\\Users\\brian\\AppData\\Local\\Programs\\NiceHash Miner\\NiceHashMiner.exe"
-    )
+    assert_eq!(hp.miner_exe, default_nice_hash_location())
   }
 
   #[test]
   fn hashpath_parse() {
-    let contents = r#"
-gaming_path=Notepad.exe,D:\GAMES\steamapps\common
+    let contents = "
+gaming_path=Notepad.exe,D:\\GAMES\\steamapps\\common
 mining_path=NiceHashMiner.exe,app_nhm.exe
-miner_exe=C:\Users\brian\AppData\Local\Programs\NiceHash Miner\NiceHashMiner.exe
-"#;
-    let res = HashPath::parse(contents);
+miner_exe="
+      .to_string()
+      + &default_nice_hash_location();
+    let res = HashPath::parse(&contents);
     assert!(res.is_ok());
     let hp = res.unwrap();
     assert_eq!(hp.mining_path, vec!["NiceHashMiner.exe", "app_nhm.exe"]);
@@ -162,10 +171,7 @@ miner_exe=C:\Users\brian\AppData\Local\Programs\NiceHash Miner\NiceHashMiner.exe
       hp.gaming_path,
       vec!["Notepad.exe", "D:\\GAMES\\steamapps\\common"]
     );
-    assert_eq!(
-      hp.miner_exe,
-      "C:\\Users\\brian\\AppData\\Local\\Programs\\NiceHash Miner\\NiceHashMiner.exe"
-    )
+    assert_eq!(hp.miner_exe, default_nice_hash_location())
   }
 
   #[test]
