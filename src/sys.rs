@@ -2,7 +2,7 @@ use std::str;
 
 use sysinfo::{Pid, Process, ProcessExt, SystemExt};
 
-use crate::config;
+use crate::HashPath;
 
 #[derive(Debug)]
 pub struct Sys {
@@ -21,18 +21,17 @@ impl Sys {
   }
 
   pub fn fetch_pids(&mut self) -> Pids {
-    let gpu_p1 = config::json().gpu_p1;
-    let gpu_p2 = config::json().gpu_p2;
+    let hp = HashPath::fetch().unwrap();
 
     let mut p1: Vec<Pid> = vec![];
     let mut p2: Vec<Pid> = vec![];
 
     // initial search for gaming and mining parent processes
     for (pid, p) in self.refresh().system.processes() {
-      if gpu_p1.contains(&p.name().to_owned()) {
+      if hp.gaming_path.contains(&p.name().to_owned()) {
         println!("{}", Self::pretty_proc(p, "Gaming Process"));
         p1.push(pid.to_owned());
-      } else if gpu_p2.contains(&p.name().to_owned()) {
+      } else if hp.mining_path.contains(&p.name().to_owned()) {
         println!("{}", Self::pretty_proc(p, "Mining Process"));
         p2.push(pid.to_owned());
       }
