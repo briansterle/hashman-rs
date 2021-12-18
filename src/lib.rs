@@ -1,7 +1,10 @@
 #![allow(dead_code)]
 
-use sysinfo::{System, SystemExt};
+use std::collections::HashMap;
 use std::env;
+use std::ptr::null;
+
+use sysinfo::{System, SystemExt};
 
 use gpu::{WindowsGPU, GPU};
 
@@ -15,9 +18,8 @@ mod mining;
 mod rig;
 mod sys;
 
-
 fn miner_path() -> String {
-  env::var("HASHMAN_MINER_PATH").expect("please set HASHMAN_MINER_PATH env var")  
+  env::var("HASHMAN_MINER_PATH").expect("please set HASHMAN_MINER_PATH env var")
 }
 
 fn gaming_path() -> String {
@@ -31,6 +33,61 @@ pub struct HashEnv {
   gpu: WindowsGPU,
 }
 
+const GPUTIL_PY: &'static str = r#"import GPUtil`ntry:`n`tprint(GPUtil.getGPUs().pop().load)`nexcept IndexError:`n`tprint(0.0)`n"#;
+const PYTHON: &'static str = "python";
+const HASH_CONF: &'static str = "~/.hashman";
+
+pub fn hash_path() -> String {
+  format!("{:?}/hashpath.txt", HASH_CONF)
+}
+
+struct HashPath {
+  mining_path: Vec<String>,
+  gaming_path: Vec<String>,
+}
+
+impl HashPath {
+  fn parse(str: &str) -> Result<Self, ()> {
+    let lines = str.split("\n");
+    let splitty: HashMap<&str, Vec<&str>> = HashMap::from_iter(
+      lines
+        .map(|line| {
+          let kv: Vec<&str> = line.split("=").collect();
+          return (kv[0], kv[1]);
+        })
+        .map(|(name, path)| {
+          let paths: Vec<&str> = path.split(",").collect();
+          return (name, paths);
+        }),
+    );
+
+    println!("{:#?}", splitty);
+    return Ok(HashPath {
+      mining_path: vec![],
+      gaming_path: vec![],
+    });
+  }
+
+  pub fn fetch() -> Result<Self, ()> {
+    // if ~/.hashman does not exist create it
+    // if  ~/.hashman/hashpath.txt does not exist create/load defaults
+    // then parse dirs
+    if std::path::Path::new(HASH_CONF).is_dir() {
+      if std::path::Path::new(&hash_path()).is_file() {
+        // parse dat
+        let data = &std::fs::read_to_string(hash_path()).unwrap();
+        return HashPath::parse(data);
+      } else {
+      }
+    } else {
+    }
+    Ok(HashPath {
+      mining_path: vec![],
+      gaming_path: vec![],
+    })
+  }
+}
+
 impl HashEnv {
   pub fn setup() -> Self {
     let env = HashEnv {
@@ -38,7 +95,7 @@ impl HashEnv {
       sys: Sys {
         system: System::new_all(),
       },
-      gpu: GPU::new(&config::json().py_gputil, &config::json().py_exec),
+      gpu: GPU::new(PYTHON, GPUTIL_PY),
     };
     println!("Hashman [INFO] env = {:#?}", env);
     env

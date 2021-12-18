@@ -3,7 +3,7 @@ use std::process::Command;
 type GPULoad = f64;
 
 pub trait GPU {
-  fn new(py_gputil: &str, py_exec: &str) -> Self;
+  fn new(py_exec: &str, py_gputil: &str) -> Self;
   fn is_hot(&self) -> bool {
     self.get_util().unwrap() > 0.5
   }
@@ -15,15 +15,15 @@ pub trait GPU {
 
 #[derive(Debug)]
 pub struct WindowsGPU {
-  py_gputil: String,
   py_exec: String,
+  py_gputil: String,
 }
 
 impl GPU for WindowsGPU {
   fn new(py_gputil: &str, py_exec: &str) -> WindowsGPU {
     WindowsGPU {
-      py_gputil: py_gputil.to_string(),
       py_exec: py_exec.to_string(),
+      py_gputil: py_gputil.to_string(),
     }
   }
 
