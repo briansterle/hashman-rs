@@ -1,11 +1,10 @@
 #![allow(dead_code)]
 
 use std::collections::HashMap;
-use std::env;
 
 use sysinfo::{System, SystemExt};
 
-use gpu::{WindowsGPU, GPU};
+use gpu::{Gpu, WindowsGPU};
 
 pub use crate::rig::Rig;
 pub use crate::sys::Sys;
@@ -15,13 +14,8 @@ mod mining;
 mod rig;
 mod sys;
 
-fn miner_path() -> String {
-  env::var("HASHMAN_MINER_PATH").expect("please set HASHMAN_MINER_PATH env var")
-}
-
-fn gaming_path() -> String {
-  env::var("HASHMAN_GAMING_PATH").expect("please set HASHMAN_GAMING_PATH env var")
-}
+type Exe = str;
+type GPULoad = f64;
 
 #[derive(Debug)]
 pub struct HashEnv {
@@ -30,9 +24,8 @@ pub struct HashEnv {
   gpu: WindowsGPU,
 }
 
-const GPUTIL_PY: &'static str = "import GPUtil; print(GPUtil.getGPUs().pop().load)";
-const PYTHON: &'static str = "python";
-// const HASH_CONF: &'static str = "~/.hashman";
+const GPUTIL_PY: &str = "import GPUtil; print(GPUtil.getGPUs().pop().load)";
+const PYTHON: &str = "python";
 
 fn hash_conf_dir() -> String {
   let home = dirs::home_dir()
@@ -42,8 +35,6 @@ fn hash_conf_dir() -> String {
     .to_string();
   format!("{}\\.hashman", home)
 }
-
-type Exe = str;
 
 pub fn hash_path() -> String {
   format!("{}\\hashpath.txt", hash_conf_dir())
@@ -58,21 +49,21 @@ struct HashPath {
 
 impl HashPath {
   fn parse(str: &str) -> Result<Self, ()> {
-    let lines = str.split("\n");
+    let lines = str.split('\n');
     let splitty: HashMap<&str, Vec<String>> = HashMap::from_iter(
       lines
         .filter(|line| !line.is_empty())
         .map(|line| {
-          let kv: Vec<&str> = line.split("=").collect();
-          return (kv[0], kv[1]);
+          let kv: Vec<&str> = line.split('=').collect();
+          (kv[0], kv[1])
         })
         .map(|(name, path)| {
-          let paths: Vec<String> = path.split(",").map(|s| s.to_string()).collect();
-          return (name, paths);
+          let paths: Vec<String> = path.split(',').map(|s| s.to_string()).collect();
+          (name, paths)
         }),
     );
 
-    return Ok(HashPath {
+    Ok(HashPath {
       mining_path: splitty.get("mining_path").unwrap().to_vec(),
       gaming_path: splitty.get("gaming_path").unwrap().to_vec(),
       miner_exe: splitty
@@ -81,7 +72,7 @@ impl HashPath {
         .first()
         .unwrap()
         .to_string(),
-    });
+    })
   }
 
   pub fn fetch() -> Result<Self, ()> {
@@ -116,7 +107,7 @@ impl HashEnv {
       sys: Sys {
         system: System::new_all(),
       },
-      gpu: GPU::new(PYTHON, GPUTIL_PY),
+      gpu: Gpu::new(PYTHON, GPUTIL_PY),
     };
     println!("Hashman [INFO] env = {:#?}", env);
     env

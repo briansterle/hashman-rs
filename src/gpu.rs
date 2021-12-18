@@ -1,8 +1,8 @@
 use std::process::Command;
 
-type GPULoad = f64;
+use crate::GPULoad;
 
-pub trait GPU {
+pub trait Gpu {
   fn new(py_exec: &str, py_gputil: &str) -> Self;
   fn is_hot(&self) -> bool {
     self.get_util().unwrap() > 0.5
@@ -19,7 +19,7 @@ pub struct WindowsGPU {
   py_gputil: String,
 }
 
-impl GPU for WindowsGPU {
+impl Gpu for WindowsGPU {
   fn new(py_exec: &str, py_gputil: &str) -> WindowsGPU {
     WindowsGPU {
       py_exec: py_exec.to_string(),

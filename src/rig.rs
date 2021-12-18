@@ -3,7 +3,7 @@ use std::thread;
 
 use sysinfo::Pid;
 
-use crate::gpu::GPU;
+use crate::gpu::Gpu;
 use crate::mining::Mining;
 use crate::{HashEnv, WindowsGPU};
 
