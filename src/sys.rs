@@ -20,18 +20,18 @@ impl Sys {
     self
   }
 
-  pub fn fetch_pids(&mut self) -> Pids {
-    let hp = HashPath::fetch().unwrap();
-
+  pub fn fetch_pids(&mut self, hash_path: &HashPath) -> Pids {
     let mut p1: Vec<Pid> = vec![];
     let mut p2: Vec<Pid> = vec![];
+    let system = &self.refresh().system;
+    let processes = system.processes();
 
     // initial search for gaming and mining parent processes
-    for (pid, p) in self.refresh().system.processes() {
-      if hp.gaming_path.contains(&p.name().to_owned()) {
+    for (pid, p) in processes {
+      if hash_path.mining_path.contains(&p.name().to_owned()) {
         println!("{}", Self::pretty_proc(p, "Gaming Process"));
         p1.push(pid.to_owned());
-      } else if hp.mining_path.contains(&p.name().to_owned()) {
+      } else if hash_path.gaming_path.contains(&p.name().to_owned()) {
         println!("{}", Self::pretty_proc(p, "Mining Process"));
         p2.push(pid.to_owned());
       }

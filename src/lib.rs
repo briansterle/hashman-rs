@@ -19,7 +19,7 @@ type GPULoad = f64;
 
 #[derive(Debug)]
 pub struct HashEnv {
-  conf: HashPath,
+  hash_path: HashPath,
   sys: Sys,
   gpu: WindowsGPU,
 }
@@ -41,7 +41,7 @@ pub fn hash_path() -> String {
 }
 
 #[derive(Debug)]
-struct HashPath {
+pub struct HashPath {
   mining_path: Vec<String>,
   gaming_path: Vec<String>,
   miner_exe: String,
@@ -103,7 +103,7 @@ impl HashPath {
 impl HashEnv {
   pub fn setup() -> Self {
     let env = HashEnv {
-      conf: HashPath::fetch().expect("couldn't parse the HASH_PATH"),
+      hash_path: HashPath::fetch().expect("couldn't parse the HASH_PATH"),
       sys: Sys {
         system: System::new_all(),
       },
@@ -177,7 +177,8 @@ miner_exe=C:\Users\brian\AppData\Local\Programs\NiceHash Miner\NiceHashMiner.exe
     let mut sys = Sys {
       system: sysinfo::System::new_all(),
     };
-    let pids = &mut sys.fetch_pids();
+    let hp = HashPath::fetch().unwrap();
+    let pids = &mut sys.fetch_pids(&hp);
     assert!(!pids.mining.is_empty());
   }
 

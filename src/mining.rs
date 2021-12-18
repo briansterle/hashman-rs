@@ -5,7 +5,7 @@ use std::{thread, time};
 use sysinfo::{Pid, ProcessExt, Signal};
 
 use crate::rig::Rig;
-use crate::{Exe, Sys};
+use crate::{Exe, HashPath, Sys};
 
 pub struct Mining {}
 
@@ -29,9 +29,9 @@ impl Mining {
     }
   }
 
-  pub fn kill(sys: &mut Sys, pids: Vec<Pid>) {
+  pub fn kill(sys: &mut Sys, pids: Vec<Pid>, hp: &HashPath) {
     let kill_pids = if pids.is_empty() {
-      sys.fetch_pids().mining
+      sys.fetch_pids(hp).mining
     } else {
       pids
     };
