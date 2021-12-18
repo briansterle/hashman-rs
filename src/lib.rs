@@ -1,6 +1,7 @@
 #![allow(dead_code)]
 
 use std::collections::HashMap;
+use std::io::Write;
 
 use sysinfo::{System, SystemExt};
 
@@ -26,6 +27,10 @@ pub struct HashEnv {
 
 const GPUTIL_PY: &str = "import GPUtil; print(GPUtil.getGPUs().pop().load)";
 const PYTHON: &str = "python";
+const DEFAULT_CONFIGURATION: &[u8] = b"gaming_path=Notepad.exe,D:\\GAMES\\steamapps\\common
+mining_path=NiceHashMiner.exe,app_nhm.exe
+miner_exe=C:\\Users\\brian\\AppData\\Local\\Programs\\NiceHash Miner\\NiceHashMiner.exe
+";
 
 fn hash_conf_dir() -> String {
   let home = dirs::home_dir()
@@ -48,7 +53,7 @@ pub struct HashPath {
 }
 
 impl HashPath {
-  fn parse(str: &str) -> Result<Self, ()> {
+  fn parse(str: &str) -> Result<Self, std::io::Error> {
     let lines = str.split('\n');
     let splitty: HashMap<&str, Vec<String>> = HashMap::from_iter(
       lines
@@ -75,28 +80,26 @@ impl HashPath {
     })
   }
 
-  pub fn fetch() -> Result<Self, ()> {
-    // if ~/.hashman does not exist create it
-    // if  ~/.hashman/hashpath.txt does not exist create/load defaults
-    // then parse dirs
+  pub fn fetch() -> Result<Self, std::io::Error> {
     if std::path::Path::new(&hash_conf_dir()).is_dir() {
       let hp = &hash_path();
       println!("checking hash path @ {}", hp);
       if std::path::Path::new(hp).is_file() {
         // parse dat
-        let data = &std::fs::read_to_string(hash_path()).unwrap();
-        return HashPath::parse(data);
+        let data = &std::fs::read_to_string(hash_path())?;
+        HashPath::parse(data)
       } else {
-        println!("HASH_PATH not a file")
+        println!("HASH_PATH not a file");
+        let mut file = std::fs::File::create(hash_path())?;
+        file.write_all(DEFAULT_CONFIGURATION)?;
+        let data = &std::fs::read_to_string(hash_path())?;
+        HashPath::parse(data)
       }
     } else {
-      println!("HASH_CONF not a dir")
+      println!("Creating hash_conf_dir...");
+      std::fs::create_dir(&hash_conf_dir())?;
+      Self::fetch()
     }
-    panic!("couldn't load the HashPath");
-    // Ok(HashPath {
-    //   mining_path: vec![],
-    //   gaming_path: vec![],
-    // })
   }
 }
 
