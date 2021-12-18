@@ -7,11 +7,9 @@ use sysinfo::{System, SystemExt};
 
 use gpu::{WindowsGPU, GPU};
 
-pub use crate::config::Config;
 pub use crate::rig::Rig;
 pub use crate::sys::Sys;
 
-mod config;
 mod gpu;
 mod mining;
 mod rig;
@@ -135,16 +133,24 @@ impl HashEnv {
 mod tests {
   use sysinfo::SystemExt;
 
-  use crate::config::Config;
   use crate::rig::Rig;
   use crate::sys::Sys;
-  use crate::{config, HashEnv, HashPath};
+  use crate::{HashEnv, HashPath};
 
   #[test]
   fn hashpath_fetch() {
     let res = HashPath::fetch();
     assert!(res.is_ok());
     let hp = res.unwrap();
+    assert_eq!(hp.mining_path, vec!["NiceHashMiner.exe", "app_nhm.exe"]);
+    assert_eq!(
+      hp.gaming_path,
+      vec!["Notepad.exe", "D:\\GAMES\\steamapps\\common"]
+    );
+    assert_eq!(
+      hp.miner_exe,
+      "C:\\Users\\brian\\AppData\\Local\\Programs\\NiceHash Miner\\NiceHashMiner.exe"
+    )
   }
 
   #[test]
@@ -166,14 +172,6 @@ miner_exe=C:\Users\brian\AppData\Local\Programs\NiceHash Miner\NiceHashMiner.exe
       hp.miner_exe,
       "C:\\Users\\brian\\AppData\\Local\\Programs\\NiceHash Miner\\NiceHashMiner.exe"
     )
-  }
-
-  #[test]
-  fn config_parses() {
-    let config: Config = config::json();
-    assert!(config.miner_exe.ends_with("NiceHashMiner.exe"));
-    assert!(config.gpu_p1.contains(&"Notepad.exe".to_string()));
-    assert!(config.gpu_p2.contains(&"NiceHashMiner.exe".to_string()));
   }
 
   #[test]
