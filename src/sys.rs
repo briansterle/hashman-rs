@@ -8,8 +8,10 @@ use crate::HashPath;
 #[derive(Debug)]
 pub struct Sys {
   pub system: sysinfo::System,
+  pub pids: Option<Pids>,
 }
 
+#[derive(Debug, Clone)]
 pub struct Pids {
   pub gaming: Vec<Pid>,
   pub mining: Vec<Pid>,
@@ -19,6 +21,28 @@ impl Sys {
   fn refresh(&mut self) -> &mut Self {
     self.system.refresh_processes();
     self
+  }
+
+  pub fn refresh_pids(&mut self, hash_path: &HashPath) -> Pids {
+    &self.refresh().system;
+    // if my pids are still alive
+    let mut needs_fetch = false;
+    if let Some(pids) = &self.pids {
+      for pid in &pids.mining {
+        // refresh them and return
+        needs_fetch |= self.system.refresh_process(pid.to_owned());
+      }
+
+      for pid in &pids.gaming {
+        // refresh them and return
+        needs_fetch |= self.system.refresh_process(pid.to_owned());
+      }
+    }
+    // otherwise fetch new pids (expensive)
+    if needs_fetch {
+      self.fetch_pids(hash_path);
+    }
+    self.pids.to_owned().unwrap()
   }
 
   pub fn fetch_pids(&mut self, hash_path: &HashPath) -> Pids {
@@ -50,6 +74,11 @@ impl Sys {
         }
       }
     }
+
+    self.pids = Some(Pids {
+      gaming: p1.to_owned(),
+      mining: p2.to_owned(),
+    });
 
     Pids {
       gaming: p1,

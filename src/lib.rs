@@ -121,6 +121,7 @@ impl HashEnv {
       hash_path: HashPath::fetch().expect("couldn't parse the HASH_PATH"),
       sys: Sys {
         system: System::new_all(),
+        pids: None,
       },
       gpu: Gpu::new(PYTHON, GPUTIL_PY),
     };
@@ -186,6 +187,7 @@ miner_exe="
   fn gets_priority_processes() {
     let mut sys = Sys {
       system: sysinfo::System::new_all(),
+      pids: None,
     };
     let hp = HashPath::fetch().unwrap();
     let pids = &mut sys.fetch_pids(&hp);
