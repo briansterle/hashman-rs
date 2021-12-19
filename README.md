@@ -26,7 +26,7 @@ this outputs an exe at `target/release/hashman.exe`. Add it to your PATH for eas
 hashman-rs.exe {num_loops} {interval_seconds}
 ```
 
-### usage notes:
+### args
 
 * num_loops:          n times the program will wake from sleep and check GPU contention
   * default 21,000,000
