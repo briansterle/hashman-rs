@@ -1,6 +1,6 @@
 use std::str;
 
-use log::debug;
+use log::{debug, info};
 use sysinfo::{Pid, Process, ProcessExt, SystemExt};
 
 use crate::HashPath;
@@ -22,6 +22,9 @@ impl Pids {
     gaming: vec![],
     mining: vec![],
   };
+  pub fn is_empty(&self) -> bool {
+    self.gaming.is_empty() && self.mining.is_empty()
+  }
 }
 
 impl Sys {
@@ -32,22 +35,27 @@ impl Sys {
 
   pub fn refresh_pids(&mut self, hash_path: &HashPath) -> Pids {
     let _ = &self.refresh().system;
-    // if my pids are still alive
-    let mut needs_fetch = false;
-    if !&self.pids.mining.is_empty() || !&self.pids.gaming.is_empty() {
+
+    if self.pids.is_empty() {
+      info!("needed deep processes fetch");
+      return self.fetch_pids(hash_path);
+    } else {
+      let mut no_fetch = false;
+
       for pid in &self.pids.mining {
-        // refresh them and return
-        needs_fetch |= self.system.refresh_process(pid.to_owned());
+        debug!("refreshing mining processes");
+        no_fetch |= self.system.refresh_process(pid.to_owned());
       }
 
       for pid in &self.pids.gaming {
-        // refresh them and return
-        needs_fetch |= self.system.refresh_process(pid.to_owned());
+        debug!("refreshing gaming processes");
+        no_fetch |= self.system.refresh_process(pid.to_owned());
       }
-    }
-    // otherwise fetch new pids (expensive)
-    if needs_fetch {
-      self.fetch_pids(hash_path);
+
+      if !no_fetch {
+        info!("needed deep processes fetch");
+        self.fetch_pids(hash_path);
+      }
     }
     self.pids.to_owned()
   }
@@ -82,6 +90,7 @@ impl Sys {
       }
     }
 
+    debug!("mutating pids in fetch");
     self.pids = Pids {
       gaming: p1.to_owned(),
       mining: p2.to_owned(),

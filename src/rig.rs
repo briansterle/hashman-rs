@@ -23,8 +23,7 @@ impl Rig {
 
     while tries < max_tries {
       if env.gpu.is_hot() {
-        return_state = self;
-        break;
+        return self;
       } else {
         debug!("Sleeping until gpu_load.is_hot...");
         thread::sleep(time::Duration::from_millis(1000));
@@ -62,7 +61,6 @@ impl Rig {
           Mining::kill(env);
           mining_pids = env.sys.refresh_pids(&env.hash_path).mining;
         }
-
         Self::Gaming
       }
     }
