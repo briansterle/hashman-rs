@@ -31,7 +31,7 @@ impl Mining {
   }
 
   pub fn kill(env: &mut HashEnv) {
-    let kill_pids = env.sys.fetch_pids(&env.hash_path).mining;
+    let kill_pids = env.sys.refresh_pids(&env.hash_path).mining;
     for pid in kill_pids {
       loop {
         match env.sys.lookup(pid) {

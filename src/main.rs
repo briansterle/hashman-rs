@@ -9,12 +9,12 @@ fn main() {
 
   let args = std::env::args().collect::<Vec<String>>();
   let loops: u64 = match args.get(1) {
-    None => 1,
+    None => 21_000_000,
     Some(count) => count.parse().unwrap(),
   };
 
   let refresh_interval: u64 = match args.get(2) {
-    None => 1,
+    None => 21,
     Some(count) => count.parse().unwrap(),
   };
 
