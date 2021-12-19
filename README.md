@@ -35,7 +35,7 @@ hashman-rs.exe {num_loops} {interval_seconds}
 
 Create your hashpath configuration file at `~/.hashman/hashpath.toml`
 
-This is auto-generated and populated by default when you first run the app, if it does not exist.
+If it does not exist, this file is auto-generated and populated by default when you first run the app.
 
 template:
 
