@@ -8,7 +8,7 @@ use crate::HashPath;
 #[derive(Debug)]
 pub struct Sys {
   pub system: sysinfo::System,
-  pub pids: Option<Pids>,
+  pub pids: Pids,
 }
 
 #[derive(Debug, Clone)]
@@ -27,13 +27,13 @@ impl Sys {
     &self.refresh().system;
     // if my pids are still alive
     let mut needs_fetch = false;
-    if let Some(pids) = &self.pids {
-      for pid in &pids.mining {
+    if !&self.pids.mining.is_empty() || !&self.pids.gaming.is_empty() {
+      for pid in &self.pids.mining {
         // refresh them and return
         needs_fetch |= self.system.refresh_process(pid.to_owned());
       }
 
-      for pid in &pids.gaming {
+      for pid in &self.pids.gaming {
         // refresh them and return
         needs_fetch |= self.system.refresh_process(pid.to_owned());
       }
@@ -42,7 +42,7 @@ impl Sys {
     if needs_fetch {
       self.fetch_pids(hash_path);
     }
-    self.pids.to_owned().unwrap()
+    self.pids.to_owned()
   }
 
   pub fn fetch_pids(&mut self, hash_path: &HashPath) -> Pids {
@@ -75,10 +75,10 @@ impl Sys {
       }
     }
 
-    self.pids = Some(Pids {
+    self.pids = Pids {
       gaming: p1.to_owned(),
       mining: p2.to_owned(),
-    });
+    };
 
     Pids {
       gaming: p1,
