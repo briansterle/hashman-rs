@@ -23,7 +23,7 @@ fn main() {
   while i < loops {
     i += 1;
     let updated: Rig = env.run();
-    info!("Rig::move_state = {:?}", updated);
+    debug!("Rig::move_state = {:?}", updated);
     std::thread::sleep(Duration::from_secs(refresh_interval));
   }
 }
