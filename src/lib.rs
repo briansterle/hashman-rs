@@ -122,10 +122,7 @@ impl HashEnv {
       hash_path: HashPath::fetch().expect("couldn't parse the HASH_PATH"),
       sys: Sys {
         system: System::new_all(),
-        pids: Pids {
-          gaming: vec![],
-          mining: vec![],
-        },
+        pids: Pids::DEFAULT,
       },
       gpu: Gpu::new(PYTHON, GPUTIL_PY),
     };
@@ -145,7 +142,7 @@ mod tests {
   use sysinfo::SystemExt;
 
   use crate::rig::Rig;
-  use crate::sys::Sys;
+  use crate::sys::{Sys, Pids};
   use crate::{default_nice_hash_location, HashEnv, HashPath};
 
   #[test]
@@ -191,7 +188,7 @@ miner_exe="
   fn gets_priority_processes() {
     let mut sys = Sys {
       system: sysinfo::System::new_all(),
-      pids: None,
+      pids: Pids::DEFAULT,
     };
     let hp = HashPath::fetch().unwrap();
     let pids = &mut sys.fetch_pids(&hp);

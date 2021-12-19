@@ -17,6 +17,13 @@ pub struct Pids {
   pub mining: Vec<Pid>,
 }
 
+impl Pids {
+  pub const DEFAULT: Self = Pids {
+    gaming: vec![],
+    mining: vec![],
+  };
+}
+
 impl Sys {
   fn refresh(&mut self) -> &mut Self {
     self.system.refresh_processes();
@@ -24,7 +31,7 @@ impl Sys {
   }
 
   pub fn refresh_pids(&mut self, hash_path: &HashPath) -> Pids {
-    &self.refresh().system;
+    let _ = &self.refresh().system;
     // if my pids are still alive
     let mut needs_fetch = false;
     if !&self.pids.mining.is_empty() || !&self.pids.gaming.is_empty() {
