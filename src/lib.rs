@@ -3,6 +3,7 @@
 use std::collections::HashMap;
 use std::io::Write;
 
+use log::{debug, info};
 use sysinfo::{System, SystemExt};
 
 use gpu::{Gpu, WindowsGPU};
@@ -94,20 +95,20 @@ impl HashPath {
   pub fn fetch() -> Result<Self, std::io::Error> {
     if std::path::Path::new(&hash_conf_dir()).is_dir() {
       let hp = &hash_path();
-      println!("checking hash path @ {}", hp);
+      debug!("checking hash path @ {}", hp);
       if std::path::Path::new(hp).is_file() {
         // parse dat
         let data = &std::fs::read_to_string(hash_path())?;
         HashPath::parse(data)
       } else {
-        println!("HASH_PATH not a file");
+        debug!("HASH_PATH not a file");
         let mut file = std::fs::File::create(hash_path())?;
         file.write_all(default_conf().as_bytes())?;
         let data = &std::fs::read_to_string(hash_path())?;
         HashPath::parse(data)
       }
     } else {
-      println!("Creating hash_conf_dir...");
+      debug!("Creating hash_conf_dir...");
       std::fs::create_dir(&hash_conf_dir())?;
       Self::fetch()
     }
@@ -123,13 +124,13 @@ impl HashEnv {
       },
       gpu: Gpu::new(PYTHON, GPUTIL_PY),
     };
-    println!("Hashman [INFO] env = {:#?}", env);
+    debug!("env = {:#?}", env);
     env
   }
 
   pub fn run(&mut self) -> Rig {
     let current: Rig = Rig::state(self);
-    println!("Hashman [INFO] Rig::state = {:?}", current);
+    info!("Rig::state = {:?}", current);
     Rig::move_state(current, self)
   }
 }

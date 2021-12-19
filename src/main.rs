@@ -1,8 +1,12 @@
 use std::time::Duration;
 
+use log::{debug, info};
+
 use hashman_rs::{HashEnv, Rig};
 
 fn main() {
+  env_logger::init();
+
   let args = std::env::args().collect::<Vec<String>>();
   let loops: u64 = match args.get(1) {
     None => 1,
@@ -18,7 +22,7 @@ fn main() {
   while i < loops {
     i += 1;
     let updated: Rig = HashEnv::setup().run();
-    println!("Hashman [INFO] Rig::move_state = {:?}", updated);
+    info!("Rig::move_state = {:?}", updated);
     std::thread::sleep(Duration::from_secs(refresh_interval));
   }
 }
