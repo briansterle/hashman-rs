@@ -19,7 +19,6 @@ impl Rig {
   fn if_idle(self, env: &mut HashEnv) -> Self {
     let max_tries = 90;
     let mut tries = 0;
-    let mut return_state = Self::Idle;
 
     while tries < max_tries {
       if env.gpu.is_hot() {
@@ -30,11 +29,8 @@ impl Rig {
       }
       tries += 1;
     }
-
-    if return_state == Self::Idle {
-      Mining::kill(env)
-    }
-    return_state
+    Mining::kill(env);
+    Self::Idle
   }
 
   pub fn state(env: &mut HashEnv) -> Self {
