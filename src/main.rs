@@ -19,9 +19,10 @@ fn main() {
   };
 
   let mut i = 0;
+  let mut env = HashEnv::setup();
   while i < loops {
     i += 1;
-    let updated: Rig = HashEnv::setup().run();
+    let updated: Rig = env.run();
     info!("Rig::move_state = {:?}", updated);
     std::thread::sleep(Duration::from_secs(refresh_interval));
   }
