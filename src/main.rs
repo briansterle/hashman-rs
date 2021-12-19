@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use log::{debug, error, info, log_enabled, Level};
+use log::{debug, info};
 
 use hashman_rs::{HashEnv, Rig};
 
@@ -22,7 +22,7 @@ fn main() {
   while i < loops {
     i += 1;
     let updated: Rig = HashEnv::setup().run();
-    debug!("Hashman [INFO] Rig::move_state = {:?}", updated);
+    info!("Rig::move_state = {:?}", updated);
     std::thread::sleep(Duration::from_secs(refresh_interval));
   }
 }

@@ -3,7 +3,7 @@
 use std::collections::HashMap;
 use std::io::Write;
 
-use log::debug;
+use log::{debug, info};
 use sysinfo::{System, SystemExt};
 
 use gpu::{Gpu, WindowsGPU};
@@ -124,13 +124,13 @@ impl HashEnv {
       },
       gpu: Gpu::new(PYTHON, GPUTIL_PY),
     };
-    debug!("Hashman [INFO] env = {:#?}", env);
+    debug!("env = {:#?}", env);
     env
   }
 
   pub fn run(&mut self) -> Rig {
     let current: Rig = Rig::state(self);
-    debug!("Hashman [INFO] Rig::state = {:?}", current);
+    info!("Rig::state = {:?}", current);
     Rig::move_state(current, self)
   }
 }
