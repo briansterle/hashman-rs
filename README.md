@@ -40,9 +40,9 @@ This is auto-generated and populated by default when you first run the app, if i
 template:
 
 ```toml
-gaming_path = C:\Games\steamapps\common,D:\Games\origin
-mining_path = NiceHashMiner.exe,app_nhm.exe
-miner_exe = ~\AppData\Local\Programs\NiceHash Miner\NiceHashMiner.exe
+gaming_path = "C:\\Games\\steamapps\\common,D:\\Games\\origin"
+mining_path = "NiceHashMiner.exe,app_nhm.exe"
+miner_exe = "~\\AppData\\Local\\Programs\\NiceHash Miner\\NiceHashMiner.exe"
 ```
 
 ## Testing
