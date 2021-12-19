@@ -12,6 +12,8 @@ mining. If other apps contend with the GPU, Hashman will back off mining until r
 
 #### build for release
 
+clone repo. from root run: 
+
 ```shell
 cargo build --release
 ```
