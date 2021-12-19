@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use log::info;
+use log::debug;
 
 use hashman_rs::{HashEnv, Rig};
 
