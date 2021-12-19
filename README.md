@@ -10,12 +10,51 @@ mining. If other apps contend with the GPU, Hashman will back off mining until r
 
 ## How to run
 
-// TODO
+#### build for release
+
+```shell
+cargo build --release
+```
+
+this outputs an exe at `target/release/hashman.exe`. Add it to your PATH for easy access.
+
+#### run the exe:
+
+```shell
+hashman-rs.exe {num_loops} {interval_seconds}
+```
+
+### usage notes:
+
+* num_loops:          n times the program will wake from sleep and check GPU contention
+    * default 1
+* interval_seconds:   loop every n seconds
+    * default 1
 
 ## Configuration
 
-// TODO
+Create your hashpath configuration file at `~/.hashman/hashpath.toml`
+
+This is auto-generated and populated by default when you first run the app, if it does not exist.
+
+template:
+
+```toml
+gaming_path = C:\Games\steamapps\common,D:\Games\origin
+mining_path = NiceHashMiner.exe,app_nhm.exe
+miner_exe = ~\AppData\Local\Programs\NiceHash Miner\NiceHashMiner.exe
+```
 
 ## Testing
 
-// TODO
+run tests
+
+```shell
+cargo test
+```
+
+run bench
+
+```shell
+cargo bench
+```
