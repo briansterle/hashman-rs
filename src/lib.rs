@@ -142,7 +142,7 @@ mod tests {
   use sysinfo::SystemExt;
 
   use crate::rig::Rig;
-  use crate::sys::{Sys, Pids};
+  use crate::sys::{Pids, Sys};
   use crate::{default_nice_hash_location, HashEnv, HashPath};
 
   #[test]
@@ -191,7 +191,7 @@ miner_exe="
       pids: Pids::DEFAULT,
     };
     let hp = HashPath::fetch().unwrap();
-    let pids = &mut sys.fetch_pids(&hp);
+    let pids = &mut sys.refresh_pids(&hp);
     assert!(!pids.mining.is_empty() || pids.mining.is_empty());
   }
 
