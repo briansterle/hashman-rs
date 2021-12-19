@@ -27,9 +27,9 @@ hashman-rs.exe {num_loops} {interval_seconds}
 ### usage notes:
 
 * num_loops:          n times the program will wake from sleep and check GPU contention
-    * default 1
+  * default 21,000,000
 * interval_seconds:   loop every n seconds
-    * default 1
+  * default 21
 
 ## Configuration
 
