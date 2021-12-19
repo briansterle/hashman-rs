@@ -2,6 +2,7 @@ use std::process::Command;
 use std::time::Duration;
 use std::{thread, time};
 
+use log::debug;
 use sysinfo::{ProcessExt, Signal};
 
 use crate::rig::Rig;
@@ -22,7 +23,7 @@ impl Mining {
     match output.status.code() {
       Some(code) if code == 0 => Ok(Rig::Mining),
       Some(code) => {
-        println!("Unexpectedly exited mining exe with status code: {}", code);
+        debug!("Unexpectedly exited mining exe with status code: {}", code);
         Err(Rig::Idle)
       }
       None => Err(Rig::Idle),

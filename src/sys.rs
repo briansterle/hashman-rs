@@ -1,5 +1,6 @@
 use std::str;
 
+use log::debug;
 use sysinfo::{Pid, Process, ProcessExt, SystemExt};
 
 use crate::HashPath;
@@ -29,10 +30,10 @@ impl Sys {
     // initial search for gaming and mining parent processes
     for (pid, p) in processes {
       if hash_path.gaming_path.contains(&p.name().to_owned()) {
-        println!("{}", Self::pretty_proc(p, "Gaming Process"));
+        debug!("{}", Self::pretty_proc(p, "Gaming Process"));
         p1.push(pid.to_owned());
       } else if hash_path.mining_path.contains(&p.name().to_owned()) {
-        println!("{}", Self::pretty_proc(p, "Mining Process"));
+        debug!("{}", Self::pretty_proc(p, "Mining Process"));
         p2.push(pid.to_owned());
       }
     }
@@ -41,10 +42,10 @@ impl Sys {
     for (pid, p) in self.refresh().system.processes() {
       if let Some(parent) = p.parent() {
         if p1.contains(&parent) {
-          println!("Gaming child: {}", pid);
+          debug!("Gaming child: {}", pid);
           p1.push(pid.to_owned());
         } else if p2.contains(&parent) {
-          println!("Mining child: {}", pid);
+          debug!("Mining child: {}", pid);
           p2.push(pid.to_owned());
         }
       }

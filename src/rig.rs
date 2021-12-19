@@ -1,6 +1,8 @@
 use core::time;
 use std::thread;
 
+use log::debug;
+
 use crate::gpu::Gpu;
 use crate::mining::Mining;
 use crate::HashEnv;
@@ -24,7 +26,7 @@ impl Rig {
         return_state = self;
         break;
       } else {
-        println!("Sleeping until gpu_load.is_hot...");
+        debug!("Sleeping until gpu_load.is_hot...");
         thread::sleep(time::Duration::from_millis(1000));
       }
       tries += 1;
@@ -56,7 +58,7 @@ impl Rig {
         Mining::kill(env);
         let mut mining_pids = env.sys.fetch_pids(&env.hash_path).mining;
         while !mining_pids.is_empty() {
-          println!("mining_pids still live: {:?}", mining_pids);
+          debug!("mining_pids still live: {:?}", mining_pids);
           Mining::kill(env);
           mining_pids = env.sys.fetch_pids(&env.hash_path).mining;
         }
