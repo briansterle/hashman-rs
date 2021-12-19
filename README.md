@@ -26,9 +26,9 @@ hashman-rs.exe {num_loops} {interval_seconds}
 
 ### usage notes:
 
-* num_loops:          n times the program will wake from sleep and check GPU contention
+* num_loops: Int          n times the program will wake from sleep and check GPU contention
     * default 1
-* interval_seconds:   loop every n seconds
+* interval_seconds: Int   loop every n seconds
     * default 1
 
 ## Configuration
@@ -37,13 +37,20 @@ Create your hashpath configuration file at `~/.hashman/hashpath.toml`
 
 If it does not exist, this file is auto-generated and populated by default when you first run the app.
 
-template:
+#### Template
 
 ```toml
 gaming_path = "C:\\Games\\steamapps\\common,D:\\Games\\origin"
 mining_path = "NiceHashMiner.exe,app_nhm.exe"
 miner_exe = "~\\AppData\\Local\\Programs\\NiceHash Miner\\NiceHashMiner.exe"
 ```
+#### Schema
+* miner_exe: String
+   * the fully qualified path to your mining exe. This app is designed for a NiceHashMiner.exe but it should be compatible with other miners. 
+* gaming_path: String
+   * a comma-separated list of directories and .exe's of games. Directories will be recursively searched for any .exe's within. This does not have actually be a game executable, just any exe that needs exclusive access to the GPU. Gaming is the most common use case so this is the term used throughout hashman.
+* mining_path: String
+   * a comma-seprated list of executables that are considered "miner" proceseses
 
 ## Testing
 
