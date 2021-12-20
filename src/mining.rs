@@ -1,3 +1,4 @@
+use std::io::Error;
 use std::process::Command;
 use std::time::Duration;
 use std::{thread, time};
@@ -13,20 +14,22 @@ pub struct Mining {}
 impl Mining {
   pub fn restart(miner_exe: &Exe) -> Rig {
     let miner = Command::new(&miner_exe);
-    thread::spawn(move || Mining::run_restart_cmd(miner).expect("miner.exe crashed"));
+    thread::spawn(move || Mining::run_restart_cmd(miner).unwrap_or(Rig::Idle));
     thread::sleep(Duration::from_millis(42));
     Rig::Mining
   }
 
-  fn run_restart_cmd(mut mine: Command) -> Result<Rig, Rig> {
-    let output = mine.output().expect("failed to start mining process");
-    match output.status.code() {
-      Some(code) if code == 0 => Ok(Rig::Mining),
-      Some(code) => {
-        debug!("Unexpectedly exited mining exe with status code: {}", code);
-        Err(Rig::Idle)
+  fn run_restart_cmd(mut mine: Command) -> std::io::Result<Rig> {
+    let output = mine.output()?;
+
+    if let Some(code) = output.status.code() {
+      if code == 0 {
+        Ok(Rig::Mining)
+      } else {
+        Ok(Rig::Idle)
       }
-      None => Err(Rig::Idle),
+    } else {
+      Ok(Rig::Idle)
     }
   }
 

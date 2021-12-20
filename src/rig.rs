@@ -46,7 +46,7 @@ impl Rig {
 
   pub fn move_state(current: Rig, env: &mut HashEnv) -> Self {
     match current {
-      Self::Idle => Mining::restart(&env.hash_path.miner_exe),
+      Self::Idle => Mining::restart(&env.hash_path.miner_exe), //,.unwrap_or(Rig::Idle),
       Self::Mining => current,
       Self::Gaming => current,
       Self::Conflict => {
