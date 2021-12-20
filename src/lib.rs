@@ -30,6 +30,31 @@ pub struct HashEnv {
 const GPUTIL_PY: &str = "import GPUtil; print(GPUtil.getGPUs().pop().load)";
 const PYTHON: &str = "python";
 
+/// Get and parse 'arg: T' @ 'idx: usize' provided a mapping function F: String => T
+///   otherwise return the default 'def: T'
+/// # Arguments
+///
+/// * `idx`   - index of the arg
+/// * `f`     - func: String => T
+/// * `def`   - default if parse fails
+///
+/// ```
+/// let arg = hashman_rs::get_arg_or(0, |str| str.len(), 42);
+/// assert!(arg > 0 );
+/// let default = hashman_rs::get_arg_or(99, |str| str.len(), 42);
+/// assert_eq!(default, 42)
+/// ```
+pub fn get_arg_or<T, F>(idx: usize, f: F, def: T) -> T
+where
+  F: FnOnce(&str) -> T,
+{
+  std::env::args()
+    .collect::<Vec<String>>()
+    .get(idx)
+    .map(|arg| f(arg))
+    .unwrap_or(def)
+}
+
 fn default_conf() -> String {
   "gaming_path=Notepad.exe,D:\\GAMES\\steamapps\\common
 mining_path=NiceHashMiner.exe,app_nhm.exe

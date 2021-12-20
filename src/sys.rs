@@ -84,23 +84,21 @@ impl Sys {
     let _ = &self.refresh().system;
 
     if self.pids.is_empty() {
-      info!("Running a deep process fetch");
       return self.fetch_pids(hash_path);
     } else {
       let mut no_fetch = false;
 
       for pid in &self.pids.mining {
-        debug!("refreshing mining process: {:#?}", pid);
+        debug!("Refreshing mining process: {:#?}", pid);
         no_fetch |= self.system.refresh_process(*pid);
       }
 
       for pid in &self.pids.gaming {
-        debug!("refreshing gaming process: {:#?}", pid);
+        debug!("Refreshing gaming process: {:#?}", pid);
         no_fetch |= self.system.refresh_process(*pid);
       }
 
       if !no_fetch {
-        info!("needed deep processes fetch");
         self.fetch_pids(hash_path);
       }
     }
@@ -108,6 +106,7 @@ impl Sys {
   }
 
   pub fn fetch_pids(&mut self, hash_path: &HashPath) -> Pids {
+    info!("Running a deep process fetch...");
     let mut p1: Vec<Pid> = vec![];
     let mut p2: Vec<Pid> = vec![];
     let system = &self.refresh().system;
