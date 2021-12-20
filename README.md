@@ -5,7 +5,7 @@
 ## What is Hashman
 
 Hashman is manager for NiceHash on Windows. It introduces automation on top of NiceHash that reacts to other GPU
-activity on the target rig, for example gaming. Hashman detects when machine resources are idle and automatically starts
+activity on the target rig, i.e. example gaming. Hashman detects when machine resources are idle and automatically starts
 mining. If other apps contend with the GPU, Hashman will back off mining until resources are once again idle.
 
 ## How to run
@@ -50,7 +50,7 @@ miner_exe = "~\\AppData\\Local\\Programs\\NiceHash Miner\\NiceHashMiner.exe"
 * miner_exe: String
    * the fully qualified path to your mining exe. This app is designed for a NiceHashMiner.exe but it should be compatible with other miners. 
 * gaming_path: String
-   * a comma-separated list of directories and .exe's of games. Directories will be recursively searched for any .exe's within. This does not have actually be a game executable, just any exe that needs exclusive access to the GPU. Gaming is the most common use case so this is the term used throughout hashman.
+   * a comma-separated list of directories and .exe's of games. Directories will be recursively searched for any .exe's within. This does not need to actually be a game executable, just any exe that needs exclusive access to the GPU. Gaming is the most common use case so this is the term used throughout hashman.
 * mining_path: String
    * a comma-seprated list of executables that are considered "miner" proceseses
 
