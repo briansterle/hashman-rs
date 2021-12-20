@@ -3,6 +3,10 @@ name = "hashman-rs"
 version = "0.1.0"
 edition = "2021"
 
+[[bin]]
+name = "hashman"
+path = "src/main.rs"
+
 [dependencies]
 sysinfo = "0.21.2"
 dirs = "4.0.0"

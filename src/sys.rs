@@ -1,4 +1,4 @@
-use std::str;
+use std::{fmt, str};
 
 use log::{debug, info};
 use sysinfo::{Pid, Process, ProcessExt, SystemExt};
@@ -17,7 +17,54 @@ pub struct Pids {
   pub mining: Vec<Pid>,
 }
 
+// #[derive(Debug, Clone)]
+// pub struct PrettyProc {
+//   pp: String,
+// }
+#[derive(Debug, Clone)]
+struct Proc {
+  pid: Pid,
+  parent: Pid,
+  name: String,
+}
+
+#[derive(Clone)]
+pub struct PrettyProcs(Vec<Proc>);
+
+impl fmt::Debug for PrettyProcs {
+  fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+    if !self.0.is_empty() {
+      fmt.write_str("{\n")?;
+      for proc in &self.0 {
+        fmt.write_str(format!("\t{:?}\n", proc).as_str())?;
+      }
+      fmt.write_str("\n}")
+    } else {
+      fmt.write_str("{}")
+    }
+  }
+}
+
 impl Pids {
+  pub fn to_process(self, sys: &mut Sys) -> (PrettyProcs, PrettyProcs) {
+    let mut do_map = |pids: Vec<Pid>| -> PrettyProcs {
+      let mut pps: Vec<Proc> = vec![];
+
+      for pid in pids.into_iter() {
+        sys
+          .lookup(pid)
+          .map(|p| Proc {
+            pid,
+            parent: p.parent().unwrap_or(pid),
+            name: p.name().to_string(),
+          })
+          .map(|pp| pps.push(pp));
+      }
+      PrettyProcs(pps)
+    };
+    (do_map(self.gaming), do_map(self.mining))
+  }
+
   pub const DEFAULT: Self = Pids {
     gaming: vec![],
     mining: vec![],
@@ -37,18 +84,18 @@ impl Sys {
     let _ = &self.refresh().system;
 
     if self.pids.is_empty() {
-      info!("needed deep processes fetch");
+      info!("Running a deep process fetch");
       return self.fetch_pids(hash_path);
     } else {
       let mut no_fetch = false;
 
       for pid in &self.pids.mining {
-        debug!("refreshing mining processes");
+        debug!("refreshing mining process: {:#?}", pid);
         no_fetch |= self.system.refresh_process(*pid);
       }
 
       for pid in &self.pids.gaming {
-        debug!("refreshing gaming processes");
+        debug!("refreshing gaming process: {:#?}", pid);
         no_fetch |= self.system.refresh_process(*pid);
       }
 
@@ -69,10 +116,10 @@ impl Sys {
     // initial search for gaming and mining parent processes
     for (pid, p) in processes {
       if hash_path.gaming_path.contains(&p.name().to_string()) {
-        debug!("{}", Self::pretty_proc(p, "Gaming Process"));
+        //  debug!("{}", Self::pretty_proc(p, "Gaming Process"));
         p1.push(*pid);
       } else if hash_path.mining_path.contains(&p.name().to_string()) {
-        debug!("{}", Self::pretty_proc(p, "Mining Process"));
+        // debug!("{}", Self::pretty_proc(p, "Mining Process"));
         p2.push(*pid);
       }
     }
@@ -80,21 +127,26 @@ impl Sys {
     // second search for the children of these parents
     for (pid, p) in self.refresh().system.processes() {
       if let Some(parent) = p.parent() {
-        if p1.contains(&parent) {
-          debug!("Gaming child: {}", pid);
+        if p1.contains(&parent) && !p1.contains(pid) {
+          // debug!("Gaming child: {}", pid);
           p1.push(*pid);
-        } else if p2.contains(&parent) {
-          debug!("Mining child: {}", pid);
+        } else if p2.contains(&parent) && !p2.contains(pid) {
+          // debug!("Mining child: {}", pid);
           p2.push(*pid);
         }
       }
     }
 
-    debug!("mutating pids in fetch");
-    self.pids = Pids {
+    let pids = Pids {
       gaming: p1.to_vec(),
       mining: p2.to_vec(),
     };
+    self.pids = pids.clone();
+
+    info!(
+      "|Watched Processes| => {:#?}",
+      pids.clone().to_process(self)
+    );
 
     Pids {
       gaming: p1,

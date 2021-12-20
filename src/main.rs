@@ -26,4 +26,5 @@ fn main() {
     debug!("Rig::move_state = {:?}", updated);
     std::thread::sleep(Duration::from_secs(refresh_interval));
   }
+  from_secs
 }
