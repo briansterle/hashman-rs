@@ -34,7 +34,7 @@ fn default_conf() -> String {
   "gaming_path=Notepad.exe,D:\\GAMES\\steamapps\\common
 mining_path=NiceHashMiner.exe,app_nhm.exe
 miner_exe="
-    .to_owned()
+    .to_string()
     + &default_nice_hash_location()
 }
 

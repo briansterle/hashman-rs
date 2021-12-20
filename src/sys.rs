@@ -44,12 +44,12 @@ impl Sys {
 
       for pid in &self.pids.mining {
         debug!("refreshing mining processes");
-        no_fetch |= self.system.refresh_process(pid.to_owned());
+        no_fetch |= self.system.refresh_process(*pid);
       }
 
       for pid in &self.pids.gaming {
         debug!("refreshing gaming processes");
-        no_fetch |= self.system.refresh_process(pid.to_owned());
+        no_fetch |= self.system.refresh_process(*pid);
       }
 
       if !no_fetch {
@@ -57,7 +57,7 @@ impl Sys {
         self.fetch_pids(hash_path);
       }
     }
-    self.pids.to_owned()
+    *self.pids
   }
 
   pub fn fetch_pids(&mut self, hash_path: &HashPath) -> Pids {
@@ -68,12 +68,12 @@ impl Sys {
 
     // initial search for gaming and mining parent processes
     for (pid, p) in processes {
-      if hash_path.gaming_path.contains(&p.name().to_owned()) {
+      if hash_path.gaming_path.contains(&p.name().to_string()) {
         debug!("{}", Self::pretty_proc(p, "Gaming Process"));
-        p1.push(pid.to_owned());
-      } else if hash_path.mining_path.contains(&p.name().to_owned()) {
+        p1.push(*pid);
+      } else if hash_path.mining_path.contains(&p.name().to_string()) {
         debug!("{}", Self::pretty_proc(p, "Mining Process"));
-        p2.push(pid.to_owned());
+        p2.push(*pid);
       }
     }
 
@@ -82,18 +82,18 @@ impl Sys {
       if let Some(parent) = p.parent() {
         if p1.contains(&parent) {
           debug!("Gaming child: {}", pid);
-          p1.push(pid.to_owned());
+          p1.push(*pid);
         } else if p2.contains(&parent) {
           debug!("Mining child: {}", pid);
-          p2.push(pid.to_owned());
+          p2.push(*pid);
         }
       }
     }
 
     debug!("mutating pids in fetch");
     self.pids = Pids {
-      gaming: p1.to_owned(),
-      mining: p2.to_owned(),
+      gaming: p1.to_vec(),
+      mining: p2.to_vec(),
     };
 
     Pids {
