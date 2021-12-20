@@ -1,6 +1,6 @@
 use std::process::Command;
 
-use log::debug;
+use log::{debug, trace};
 
 use crate::GPULoad;
 
@@ -30,16 +30,16 @@ impl Gpu for WindowsGPU {
   }
 
   fn get_util(&self) -> Result<GPULoad, String> {
-    debug!("{:?}", self);
+    trace!("{:?}", self);
     let output = Command::new(&self.py_exec)
       .args(["-c", &self.py_gputil])
       .output()
       .expect("failed to execute process");
-    debug!("{:?}", output);
+    trace!("{:?}", output);
     match output.status.code() {
       Some(code) if code == 0 => {
         let load = WindowsGPU::parse_usage(output.stdout);
-        debug!("gpu_load: {:?}", load);
+        debug!("gpu_load: {:#?}", load);
         Ok(load)
       }
       Some(_) => Err(String::from("Exited with non-zero code")),
