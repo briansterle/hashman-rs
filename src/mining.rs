@@ -1,9 +1,7 @@
-use std::io::Error;
 use std::process::Command;
 use std::time::Duration;
 use std::{thread, time};
 
-use log::debug;
 use sysinfo::{ProcessExt, Signal};
 
 use crate::rig::Rig;

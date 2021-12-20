@@ -57,7 +57,7 @@ impl Sys {
         self.fetch_pids(hash_path);
       }
     }
-    *self.pids
+    self.pids.to_owned()
   }
 
   pub fn fetch_pids(&mut self, hash_path: &HashPath) -> Pids {
