@@ -39,9 +39,10 @@ const PYTHON: &str = "python";
 /// * `def`   - default if parse fails
 ///
 /// ```
-/// let arg = hashman_rs::get_arg_or(0, |str| str.len(), 42);
+/// use hashman_rs::get_arg_or;
+/// let arg = get_arg_or(0, |str| str.len(), 42);
 /// assert!(arg > 0 );
-/// let default = hashman_rs::get_arg_or(99, |str| str.len(), 42);
+/// let default = get_arg_or(99, |str| str.len(), 42);
 /// assert_eq!(default, 42)
 /// ```
 pub fn get_arg_or<T, F>(idx: usize, f: F, def: T) -> T
