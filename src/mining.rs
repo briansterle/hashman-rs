@@ -2,6 +2,7 @@ use std::process::Command;
 use std::time::Duration;
 use std::{thread, time};
 
+use log::info;
 use sysinfo::{ProcessExt, Signal};
 
 use crate::rig::Rig;
@@ -37,7 +38,10 @@ impl Mining {
       loop {
         match env.sys.lookup(pid) {
           None => break,
-          Some(p) => p.kill(Signal::Kill),
+          Some(p) => {
+            info!("Killing process: pid: {:?} name: {:?}", p.pid(), p.name());
+            p.kill(Signal::Kill)
+          }
         };
         thread::sleep(time::Duration::from_millis(42));
       }
