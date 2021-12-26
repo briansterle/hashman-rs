@@ -11,12 +11,20 @@ fn main() {
   let interval: Duration = get_arg_or(
     2,
     |sec| Duration::from_secs(sec.parse::<u64>().expect("duration: sec")),
-    Duration::from_secs(21),
+    Duration::from_secs(10),
   );
   let mut env = HashEnv::setup();
-  for _ in 1..loops {
-    let updated: Rig = env.run();
+
+  let run_then_sleep = |env: &mut HashEnv, is_deep_search: bool| {
+    let updated: Rig = env.run(is_deep_search);
     debug!("Rig::move_state = {:?}", updated);
     sleep(interval);
+  };
+
+  for _ in 1..loops {
+    run_then_sleep(&mut env, true);
+    for _ in 1..6 {
+      run_then_sleep(&mut env, false);
+    }
   }
 }

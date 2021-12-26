@@ -46,19 +46,18 @@ impl fmt::Debug for PrettyProcs {
 }
 
 impl Pids {
-  pub fn to_process(self, sys: &mut Sys) -> (PrettyProcs, PrettyProcs) {
+  pub fn into_process(self, sys: &mut Sys) -> (PrettyProcs, PrettyProcs) {
     let mut do_map = |pids: Vec<Pid>| -> PrettyProcs {
       let mut pps: Vec<Proc> = vec![];
 
       for pid in pids.into_iter() {
-        sys
-          .lookup(pid)
-          .map(|p| Proc {
-            pid,
-            parent: p.parent().unwrap_or(pid),
-            name: p.name().to_string(),
-          })
-          .map(|pp| pps.push(pp));
+        if let Some(pp) = sys.lookup(pid).map(|p| Proc {
+          pid,
+          parent: p.parent().unwrap_or(pid),
+          name: p.name().to_string(),
+        }) {
+          pps.push(pp);
+        }
       }
       PrettyProcs(pps)
     };
@@ -142,10 +141,7 @@ impl Sys {
     };
     self.pids = pids.clone();
 
-    info!(
-      "|Watched Processes| => {:#?}",
-      pids.clone().to_process(self)
-    );
+    info!("|Watched Processes| => {:#?}", pids.into_process(self));
 
     Pids {
       gaming: p1,

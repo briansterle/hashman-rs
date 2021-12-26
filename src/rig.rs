@@ -5,7 +5,7 @@ use log::debug;
 
 use crate::gpu::Gpu;
 use crate::mining::Mining;
-use crate::HashEnv;
+use crate::{HashEnv, HashPath, Pids};
 
 #[derive(Debug, PartialEq)]
 pub enum Rig {
@@ -33,9 +33,13 @@ impl Rig {
     Self::Idle
   }
 
-  pub fn state(env: &mut HashEnv) -> Self {
-    let hp = &env.hash_path;
-    let pids = env.sys.refresh_pids(hp);
+  pub fn state(env: &mut HashEnv, is_deep_search: bool) -> Self {
+    let hp: &HashPath = &env.hash_path;
+    let pids: Pids = if is_deep_search {
+      env.sys.fetch_pids(hp)
+    } else {
+      env.sys.refresh_pids(hp)
+    };
     match (pids.gaming.is_empty(), pids.mining.is_empty()) {
       (true, true) => Self::Idle,
       (false, true) => Self::Gaming,
@@ -51,7 +55,7 @@ impl Rig {
       Self::Gaming => current,
       Self::Conflict => {
         Mining::kill(env);
-        let mut mining_pids = env.sys.refresh_pids(&env.hash_path).mining;
+        let mut mining_pids = env.sys.fetch_pids(&env.hash_path).mining;
         while !mining_pids.is_empty() {
           debug!("mining_pids still live: {:?}", mining_pids);
           Mining::kill(env);

@@ -156,8 +156,8 @@ impl HashEnv {
     env
   }
 
-  pub fn run(&mut self) -> Rig {
-    let current: Rig = Rig::state(self);
+  pub fn run(&mut self, is_deep_search: bool) -> Rig {
+    let current: Rig = Rig::state(self, is_deep_search);
     info!("Rig::state = {:?}", current);
     Rig::move_state(current, self)
   }
