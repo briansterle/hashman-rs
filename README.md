@@ -2,8 +2,8 @@
 
 # Hashman
 
-Hashman is a manager for NiceHashMiner on Windows. It introduces automation on top of NiceHash that reacts to other GPU
-activity on the target rig, i.e. example gaming. Hashman detects when machine resources are idle and automatically starts
+Hashman is a manager for cryptocurrency miners on Windows. It introduces automation on top of a miner process that reacts to other GPU
+activity on the target rig, i.e. gaming. Hashman detects when machine resources are idle and automatically starts
 mining. If other apps contend with the GPU, Hashman will back off mining until resources are once again idle.
 
 ## How to run
