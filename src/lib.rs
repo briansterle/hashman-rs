@@ -177,10 +177,9 @@ mod tests {
     assert!(res.is_ok());
     let hp = res.unwrap();
     assert_eq!(hp.mining_path, vec!["NiceHashMiner.exe", "app_nhm.exe"]);
-    assert_eq!(
-      hp.gaming_path,
-      vec!["Notepad.exe", "D:\\GAMES\\steamapps\\common"]
-    );
+    assert!(hp
+      .gaming_path
+      .contains(&"D:\\GAMES\\steamapps\\common".to_string()));
     assert_eq!(hp.miner_exe, default_nice_hash_location())
   }
 
@@ -206,7 +205,7 @@ miner_exe="
   #[test]
   fn rig_gets_state() {
     let mut env = HashEnv::setup();
-    let state = Rig::state(&mut env);
+    let state = Rig::state(&mut env, true);
     assert_ne!(state, Rig::Conflict); // get_state always Idle in CI
   }
 
@@ -223,7 +222,7 @@ miner_exe="
 
   #[test]
   fn run_debug() {
-    let updated: Rig = HashEnv::setup().run();
+    let updated: Rig = HashEnv::setup().run(true);
     assert_eq!(updated, Rig::Mining)
   }
 }
