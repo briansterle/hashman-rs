@@ -3,8 +3,8 @@
 # Hashman
 
 Hashman is a manager for cryptocurrency miners on Windows. It introduces automation on top of a miner process that reacts to other GPU
-activity on the target rig, i.e. gaming. Hashman detects when machine resources are idle and automatically starts
-mining. If other apps contend with the GPU, Hashman will back off mining until resources are once again idle.
+activity on the target rig, i.e. gaming. Hashman detects when the GPU is idle and automatically starts
+mining. Then, if another app needs the GPU, Hashman will back off mining until the GPU is once again idle.
 
 ## How to run
 
